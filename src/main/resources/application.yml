@@ -1,0 +1,37 @@
+server:
+  port: 8081
+
+spring:
+  profiles:
+    active: dev
+  application:
+    name: thanos
+#  cloud:
+#    config:
+#      discovery:
+#        enabled: true
+#        service-id: thanos
+  servlet:
+    multipart:
+      max-file-size: 500MB
+      max-request-size: 500MB
+eureka:
+  client:
+    register-with-eureka: false
+    fetch-registry: false
+
+mybatis-plus:
+  mapper-locations: classpath:mapper/*.xml,classpath:mapper/*/*.xml
+  global-config:
+    db-config:
+      id-type: auto
+#  configuration:
+#    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+ribbon:
+  ReadTimeout: 5000
+  ConnectTimeout: 5000
+
+zip:
+  sourceHome: /app/logs
+  destHome: /app/logs

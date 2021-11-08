@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ziroom.qa.quality.defende.provider.caseRepository.mapper.AutoSingleApiCaseMapper">
+    <select id="findSingleApiListTableData" resultType="com.ziroom.qa.quality.defende.provider.caseRepository.entity.vo.SingleApiCaseListVO">
+        SELECT
+            distinct (sa.id) as apiId,
+            sac.id,
+            sac.is_runnable AS isRunnable,
+            sac.case_name AS caseName,
+            sac.`comment` as `comment`,
+            sac.request_param as requestParam,
+            sac.expected_results as expectedResults,
+            sac.pre_sql as preSql,
+            sac.pre_request as preRequest,
+            sac.post_sql as postSql,
+            sa.request_uri AS requestUri,
+            sa.request_type AS requestType,
+            sac.rely_id as relyId,
+            sac.rely_mq_id as relyMqId,
+            sac.rely_es_id as relyEsId,
+            sac.protocol_type as protocolType,
+            sac.request_body as requestBody,
+            sac.create_user_code as createUserCode,
+            sac.update_user_code as updateUserCode,
+            sa.encrypt_type as encryptType,
+            sa.is_rely as isRely,
+            sa.header as header,
+            sac.create_time AS createTime,
+            sac.update_time AS updateTime,
+            sa.application_name AS applicationName,
+            sa.controller_name AS controllerName
+        FROM auto_single_api_case as sac
+        INNER JOIN auto_single_api as sa ON sac.api_id = sa.id
+        where sac.deleted = 0 AND sa.deleted = 0
+        <if test="entity.applicationName != null and entity.applicationName != ''">
+            AND sa.application_name  = #{entity.applicationName,jdbcType=VARCHAR}
+        </if>
+        <if test="entity.controllerName != null and entity.controllerName != ''">
+            AND sa.controller_name  = #{entity.controllerName,jdbcType=VARCHAR}
+        </if>
+        <if test="entity.requestUri != null and entity.requestUri != ''">
+            AND sa.request_uri LIKE concat("%",#{entity.requestUri},'%')
+        </if>
+        <if test="entity.id != null and entity.id != ''">
+            AND sac.id = #{entity.id,jdbcType=INTEGER}
+        </if>
+        <if test="entity.caseName != null and entity.caseName != ''">
+            AND sac.case_name LIKE concat("%",#{entity.caseName,jdbcType=VARCHAR},'%')
+        </if>
+        <if test="entity.isRunnable != null and entity.isRunnable != ''">
+            AND sac.is_runnable = #{entity.isRunnable,jdbcType=INTEGER}
+        </if>
+
+        <if test="entity.updateUserCode != null and entity.updateUserCode != ''">
+            AND sac.update_user_code LIKE concat("%",#{entity.updateUserCode,jdbcType=VARCHAR},'%')
+        </if>
+        <if test="entity.runnable != null and entity.runnable == 1">
+            AND sac.case_name not LIKE '%swagger生成%'
+        </if>
+        <if test="entity.runnable != null and entity.runnable == 2">
+            AND sac.case_name LIKE '%swagger生成%'
+        </if>
+        <if test="entity.listIn != null and entity.listIn.size()>0">
+            AND sac.id in
+            <foreach item="item" index="index" collection="entity.listIn" open="("  close=")" separator=",">
+                #{item}
+            </foreach>
+        </if>
+        <if test="entity.listNotIn != null and entity.listNotIn.size()>0">
+            AND sac.id not in
+            <foreach item="item" index="index" collection="entity.listNotIn" open="("  close=")" separator=",">
+                #{item}
+            </foreach>
+        </if>
+        <if test="entity.startDate!=null and entity.startDate != ''">
+          AND UNIX_TIMESTAMP(sac.create_time) &gt;=#{entity.startDate}
+        </if>
+        <if test="entity.endDate!=null and entity.endDate != ''">
+          AND UNIX_TIMESTAMP(sac.create_time)&lt;#{entity.endDate}
+        </if>
+        ORDER BY sac.update_time DESC
+    </select>
+</mapper>

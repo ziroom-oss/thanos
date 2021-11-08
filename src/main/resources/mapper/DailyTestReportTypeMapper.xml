@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ziroom.qa.quality.defende.provider.mapper.DailyTestReportTypeMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.ziroom.qa.quality.defende.provider.entity.DailyTestReportType">
+        <id column="id" property="id" />
+        <result column="create_user" property="createUser" />
+        <result column="create_time" property="createTime" />
+        <result column="update_user" property="updateUser" />
+        <result column="update_time" property="updateTime" />
+        <result column="daily_id" property="dailyId" />
+        <result column="test_execution_type" property="testExecutionType" />
+        <result column="testcase_count" property="testcaseCount" />
+        <result column="run_success_count" property="runSuccessCount" />
+        <result column="run_fail_count" property="runFailCount" />
+        <result column="run_skip_count" property="runSkipCount" />
+        <result column="not_run_count" property="notRunCount" />
+        <result column="testcase_rate" property="testcaseRate" />
+        <result column="bug_count" property="bugCount" />
+        <result column="bug_success_count" property="bugSuccessCount" />
+        <result column="bug_unresolved_count" property="bugUnresolvedCount" />
+        <result column="bug_rate" property="bugRate" />
+        <result column="daily_count" property="dailyCount" />
+        <result column="daily_success_count" property="dailySuccessCount" />
+        <result column="daily_fail_count" property="dailyFailCount" />
+        <result column="daily_skip_count" property="dailySkipCount" />
+        <result column="daily_rate" property="dailyRate" />
+    </resultMap>
+
+</mapper>

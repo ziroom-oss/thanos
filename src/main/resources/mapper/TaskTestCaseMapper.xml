@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ziroom.qa.quality.defende.provider.execTask.mapper.TaskTestCaseMapper">
+
+    <update id="updateExecutionByTaskIdAndCaseId">
+        update task_test_case
+        <set>
+            <if test="executionUser != null">
+                execution_user = #{executionUser},
+            </if>
+            <if test="executionResult != null">
+                execution_result = #{executionResult},
+            </if>
+            <if test="relationBug != null">
+                relation_bug = #{relationBug},
+            </if>
+            <if test="executionVersion != null">
+                execution_version = #{executionVersion},
+            </if>
+            <if test="executionTime != null">
+                execution_time = #{executionTime}
+            </if>
+
+        </set>
+          where task_id = #{taskId} and test_case_id = #{testCaseId}
+    </update>
+
+    <select id="getExecutionListPage" resultType="com.ziroom.qa.quality.defende.provider.vo.ExecutionListVo">
+        select * from (select task.task_id as taskId, task.test_case_id as caseId, task.casename as caseName, task.test_case_level as caseLevel,
+         execution.execution_user as executionUser, execution.execution_result as executionResult, execution.relation_bug as relationBug,
+         execution.execution_version as executionVersion, execution.execution_time as executionTime
+        from task_test_case as task
+        left join test_execution as execution on task.task_id = execution.execution_task_id
+         and task.test_case_id = execution.case_id
+        where task.task_id = #{taskId}
+        ORDER BY execution.id DESC) temp
+        GROUP BY temp.caseId
+    </select>
+
+    <select id="getTestCaseStatistics" resultType="com.ziroom.qa.quality.defende.provider.vo.statistics.TestCaseStatisticVo">
+        select ta.ehr_tree_path as ehrTreePath,count(*) as testCount from test_case tc
+        left join test_application ta on ta.id = tc.belong_to_system
+        where 1=1
+        and substring(ta.ehr_tree_path,-6) in
+        <foreach collection="deptCodeList" item="deptCode" index="index"
+                 open="(" close=")" separator=",">
+            #{deptCode}
+        </foreach>
+        and between '#{startTime}' and '#{endTime}'
+        and tc.delete_flag = 0
+        and tc.flag = 1
+        group by ta.ehr_tree_path;
+    </select>
+
+</mapper>

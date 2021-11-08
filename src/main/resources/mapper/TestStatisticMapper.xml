@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ziroom.qa.quality.defende.provider.mapper.TestStatisticMapper">
+
+    <select id="getTestCaseStatistics"
+            resultType="com.ziroom.qa.quality.defende.provider.vo.statistics.TestCaseStatisticVo">
+        select ta.ehr_tree_path as treePath, count(*) as testCount
+        from test_case tc
+                 left join test_application ta on ta.id = tc.belong_to_system
+        where 1 = 1
+          and ta.ehr_tree_path like #{likeDeptCode}
+          and tc.create_time between #{startTime} and #{endTime}
+          and tc.delete_flag = 0
+          and tc.flag = 1
+        group by ta.ehr_tree_path;
+    </select>
+
+    <select id="getTaskTestCaseStatistics"
+            resultType="com.ziroom.qa.quality.defende.provider.vo.statistics.TestCaseStatisticVo">
+        select ta.ehr_tree_path as treePath, count(*) as testCount
+        from task_test_case ttc
+                 left join test_case tc on tc.case_key = ttc.case_key
+                 left join test_application ta on ta.id = tc.belong_to_system
+        where 1 = 1
+          and ta.ehr_tree_path like #{likeDeptCode}
+          and ttc.execution_time between #{startTime} and #{endTime}
+          and tc.delete_flag = 0
+          and tc.flag = 1
+        group by ta.ehr_tree_path;
+    </select>
+
+
+    <select id="getTestCaseStatisticsByPeople"
+            resultType="com.ziroom.qa.quality.defende.provider.vo.statistics.TestCaseStatisticVo">
+        select u.tree_path as treePath, count(*) as testCount
+        from test_case tc
+                 left join user u on u.user_name = tc.create_user
+        where 1 = 1
+          and u.tree_path like #{likeDeptCode}
+          and tc.create_time between #{startTime} and #{endTime}
+          and tc.delete_flag = 0
+          and tc.flag = 1
+          and tc.create_user IS NOT NULL
+        group by u.tree_path
+    </select>
+
+    <select id="getTaskTestCaseStatisticsByPeople"
+            resultType="com.ziroom.qa.quality.defende.provider.vo.statistics.TestCaseStatisticVo">
+        select u.tree_path as treePath, count(*) as testCount
+        from task_test_case ttc
+                 left join user u on u.user_name = ttc.execution_user
+        where 1 = 1
+          and u.tree_path like #{likeDeptCode}
+          and ttc.execution_time between #{startTime} and #{endTime}
+        group by u.tree_path
+    </select>
+
+    <select id="getTestStatisticsDetail"
+            resultType="com.ziroom.qa.quality.defende.provider.vo.statistics.TestCaseStatisticVo">
+        select u.tree_path as treePath, u.user_name as emailPre, count(*) as testCount
+        from test_case tc
+                 left join user u on u.user_name = tc.create_user
+        where 1 = 1
+          and u.tree_path like #{likeDeptCode}
+          and tc.create_time between #{startTime} and #{endTime}
+          and tc.create_user is not null
+          and tc.delete_flag = 0
+          and tc.flag = 1
+        group by tc.create_user
+    </select>
+
+
+    <select id="getTestExecutionStatisticsDetail"
+            resultType="com.ziroom.qa.quality.defende.provider.vo.statistics.TestCaseStatisticVo">
+        select u.tree_path as treePath, u.user_name as emailPre, count(*) as testCount
+        from task_test_case ttc
+                 left join user u on u.user_name = ttc.execution_user
+        where 1 = 1
+          and u.tree_path like #{likeDeptCode}
+          and ttc.execution_time between #{startTime} and #{endTime}
+        group by execution_user
+    </select>
+
+    <select id="getTestCaseTop" resultType="com.ziroom.qa.quality.defende.provider.vo.statistics.table.TestCaseTopVo">
+        select (@i:=@i+1) as number,t.* from
+        (select tc.casename,tc.id,u.nick_name as createUser,tc.create_time as createTime,count(*) as tcCount from
+        task_test_case ttc
+        left join test_case tc on tc.case_key = ttc.case_key
+        left join test_task tt on tt.id = ttc.task_id
+        left join user u on u.user_name = tc.create_user
+        where 1=1
+        and tc.flag = true
+        and tc.delete_flag = false
+        <if test="startTime != null and endTime != null">
+            and ttc.execution_time between #{startTime} and #{endTime}
+        </if>
+        group by ttc.case_key) t,(select @i:=0) t2
+        order by t.tcCount desc
+        limit #{topValue}
+    </select>
+
+    <select id="getAutoTaskTop" resultType="com.ziroom.qa.quality.defende.provider.vo.statistics.TaskTopVo">
+        select applicationName,count(*) as appCount from
+        (select
+        ttc.task_id as taskId,
+        ttc.application_name as applicationName,
+        tt.task_name as taskName
+        from task_test_case ttc
+        left join test_task tt on ttc.task_id = tt.id
+        where 1=1
+        and ttc.test_execution_type = 2
+        <if test="startTime != null and endTime != null">
+            and tt.create_time between #{startTime} and #{endTime}
+        </if>
+        group by ttc.task_id
+        ) sss
+        group by sss.applicationName
+        order by appCount desc
+        limit #{topValue}
+    </select>
+
+    <select id="getAutoCaseTop" resultType="com.ziroom.qa.quality.defende.provider.vo.statistics.TaskTopVo">
+        select
+        applicationName,
+        count(applicationName) as appCount
+        from
+        (select DISTINCT
+        ttc.application_name as applicationName,
+        ttc.test_case_id as caseId,
+        ttc.casename as caseName
+        from task_test_case ttc
+        where 1=1
+        and ttc.test_execution_type = 2
+        <if test="startTime != null and endTime != null">
+            and ttc.create_time between #{startTime} and #{endTime}
+        </if>
+        ) ttt
+        group by ttt.applicationName
+        order by appCount desc
+        limit #{topValue}
+    </select>
+
+    <select id="getTaskExeRate" resultType="com.ziroom.qa.quality.defende.provider.vo.statistics.TaskTopVo">
+        select
+        ttc.task_id as taskId,
+        tt.task_name as taskName,
+        ttc.execution_result as exeRes,
+        ttc.application_name as applicationName,
+        count(ttc.task_id) as appCount
+        from task_test_case ttc
+        left join test_task tt on ttc.task_id = tt.id
+        where 1=1
+        <if test="startTime != null and endTime != null">
+            and tt.create_time between #{startTime} and #{endTime}
+        </if>
+        and ttc.test_execution_type = #{exeType}
+        group by ttc.task_id,ttc.execution_result
+    </select>
+
+
+</mapper>

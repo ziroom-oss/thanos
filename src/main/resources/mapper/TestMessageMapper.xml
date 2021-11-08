@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ziroom.qa.quality.defende.provider.mapper.TestMessageMapper">
+
+    <select id="getTestMessageVoList" resultType="com.ziroom.qa.quality.defende.provider.vo.TestMessageVo">
+        select tm.id as testMessageId,tm.content as content,tm.msg_title as msgTitle from test_message tm
+        left join test_message_read tmr on tm.id = tmr.msg_id
+        where 1=1
+        and (tmr.create_user is null
+        or tm.id not in (select msg_id from test_message_read where create_user= #{userId}))
+        group by tm.id
+        order by tm.id desc
+        limit #{limitCount};
+    </select>
+</mapper>

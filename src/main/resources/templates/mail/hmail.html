@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>日報郵箱</title>
+    <style>
+        table {
+            margin-top: 10px;
+            border-collapse: collapse;
+            border: 1px solid black;
+        }
+
+        th, td {
+            width: 100px;
+            padding: 5px 15px;
+            border: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+<br>
+<span id="title" style="font-size: 16px">
+    主题：<span th:text="${dailyReportVo.testTopic.topicName}"></span>项目-
+    <span th:text="${dailyReportVo.dailyReportName}"></span>日报
+</span>
+<span>整体进度：<span th:text="${dailyReportVo.dailyReportSum.testcaseRateStr}"></span></span>
+<table>
+    <tr>
+        <td colspan="9" style="height: 150px" th:text="${emailRemark}"></td>
+    </tr>
+    <tr>
+        <th>项目名称</th>
+        <td th:text="${dailyReportVo.testTopic.topicName}"></td>
+        <th>提测版本</th>
+        <td th:text="${testVersion}"></td>
+        <th>负责人</th>
+        <td colspan="4" th:text="${dailyReportVo.testTopic.topicMaster}"></td>
+    </tr>
+
+    <tr>
+        <th>测试阶段</th>
+        <td th:text="${testStage}"></td>
+        <th>上线日期</th>
+        <td th:text="${dailyReportVo.testTopic.upTimeStr}"></td>
+        <th rowspan="4">参与人</th>
+        <td rowspan="4" colspan="4" th:text="${dailyReportVo.testTopic.topicParticipant}"></td>
+    </tr>
+
+    <tr>
+        <th>用例总数</th>
+        <td th:text="${dailyReportVo.dailyReportSum.testcaseCount}"></td>
+        <th>项目风险</th>
+        <td th:text="${dailyReportVo.dailyRiskNames}"></td>
+    </tr>
+
+    <tr>
+        <th style="color: red">成功用例数</th>
+        <td th:text="${dailyReportVo.dailyReportSum.runSuccessCount}"></td>
+        <th style="color: red">失败用例数</th>
+        <td th:text="${dailyReportVo.dailyReportSum.runFailCount}"></td>
+    </tr>
+
+    <tr>
+        <th>总bug数</th>
+        <td th:text="${dailyReportVo.dailyReportSum.bugCount}"></td>
+        <th>未解决bug数</th>
+        <td th:text="${dailyReportVo.dailyReportSum.bugUnresolvedCount}"></td>
+    </tr>
+
+    <tr>
+        <th th:rowspan="${dailyReportVo.taskSize+2}">今日工作进度</th>
+        <th colspan="3">测试执行</th>
+        <th>总用例数</th>
+        <th>成功用例数</th>
+        <th>失败用例数</th>
+        <th>今日进度</th>
+        <th>累计进度</th>
+    </tr>
+
+    <tr>
+        <th colspan="3" style="color: red">今日执行总数</th>
+        <td th:text="${dailyReportVo.dailyReportSum.dailyCount}"></td>
+        <td th:text="${dailyReportVo.dailyReportSum.dailySuccessCount}"></td>
+        <td th:text="${dailyReportVo.dailyReportSum.dailyFailCount}"></td>
+        <td th:text="${dailyReportVo.dailyReportSum.dailyRateStr}"></td>
+        <td th:text="${dailyReportVo.dailyReportSum.testcaseRateStr}"></td>
+    </tr>
+
+    <tr th:each="report,index:${dailyReportVo.dailyTestTaskList}">
+        <th colspan="3" th:text="${report.testTaskName}"></th>
+        <td th:text="${report.testcaseCount}"></td>
+        <td th:text="${report.runSuccessCount}"></td>
+        <td th:text="${report.runFailCount}"></td>
+        <td th:text="${report.dailyRateStr}"></td>
+        <td th:text="${report.testcaseRateStr}"></td>
+    </tr>
+
+    <tr>
+        <th>项目测试用例</th>
+        <td colspan="8" th:text="${projectHistoryUrl}"></td>
+    </tr>
+
+    <tr>
+        <th>项目bug地址</th>
+        <td colspan="8" th:text="${bugUrl}"></td>
+    </tr>
+
+    <tr>
+        <th rowspan="0">未解决bug列表</th>
+        <td colspan="8">
+            <p th:each="bugInfo,index:${dailyReportVo.dailyReportSum.unBugInfoList}"><br>
+                <span th:text="${'http://jira.ziroom.com/browse/'+bugInfo.issueKey}"></span>
+            </p>
+        </td>
+    </tr>
+</table>
+</body>
+</html>
