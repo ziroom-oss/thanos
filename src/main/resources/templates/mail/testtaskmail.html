@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>测试报告</title>
+    <style>
+        table {
+            margin-top: 10px;
+            border-collapse: collapse;
+            border: 1px solid black;
+        }
+
+        th, td {
+            width: 100px;
+            padding: 5px 15px;
+            border: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+<br>
+<span id="title" style="font-size: 16px">
+    <span th:utext="${emailContent}"></span>
+</span>
+<table>
+    <tr>
+        <th>测试执行详细信息</th>
+        <td colspan="8" >
+<!--            <a th:href="${testTaskDetail}" style="color:blue">请点击</a>-->
+            <span th:text="${testTaskDetail}"></span>
+        </td>
+    </tr>
+    <tr>
+        <th rowspan="1">功能列表</th>
+        <td colspan="8" >
+            <span th:each="caseName,index:${caseNameList}">
+                <span th:text="${index.index+1+' : '+caseName}"></span><br>
+            </span>
+        </td>
+    </tr>
+    <tr>
+        <th rowspan="1">BUG统计</th>
+        <th>总BUG数</th>
+        <td th:text="${bugCount}"></td>
+        <th>P1/P2级别BUG数</th>
+        <td th:text="${p1p2BugCount}"></td>
+    </tr>
+    <tr>
+        <th>测试执行地址</th>
+        <td colspan="8" ><a th:href="${testTaskUrl}" style="color:blue">请点击</a></td>
+    </tr>
+
+
+</table>
+</body>
+</html>

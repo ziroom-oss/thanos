@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <span th:text="${testTaskName}" style="color:green"></span>
+    <title>测试执行创建通知</title>
+</head>
+<body>
+<br>
+<span id="title">
+
+    创建结果：<span th:text="成功"></span>
+    <br>
+    需求jira：<a th:href="${jiraUrl}" style="color:blue">请点击</a>
+    <br>
+    需求描述：<span th:text="${jiraDesc}"></span>
+    <br>
+    关联分支：<span th:text="${branchName}"></span>
+    <br>
+    开发负责人：<span th:text="${devUserName}"></span>
+    <br>
+    测试负责人：<span th:text="${testUserName}"></span>
+    <br>
+    测试用例关联结果：<span th:text="${testCaseResult}" style="color:red"></span>
+    <br>
+    测试执行连接：<a th:href="${testTaskUrl}" style="color:blue">请点击</a>
+
+</span>
+
+</body>
+</html>

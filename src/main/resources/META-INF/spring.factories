@@ -1,0 +1,5 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  com.ziroom.qa.quality.defende.provider.config.CiConfiguration,\
+  com.ziroom.qa.quality.defende.provider.config.EhrConfiguration,\
+  com.ziroom.qa.quality.defende.provider.config.JiraConfiguration,\
+  com.ziroom.qa.quality.defende.provider.config.ZipHomeConfiguration

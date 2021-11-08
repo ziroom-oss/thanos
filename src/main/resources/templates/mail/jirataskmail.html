@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <span style="color:green">JIRA同步测试执行创建通知</span>
+    <title>JIRA同步测试执行创建通知</title>
+</head>
+<body>
+<br>
+<span id="title">
+
+    创建结果：<span th:text="成功"></span>
+    <br>
+    需求描述：<span th:text="${jiraDesc}"></span>
+    <br>
+    需求JIRA地址：<a th:href="${jiraUrl}" style="color:blue">请点击</a>
+    <br>
+    测试执行名称：<span th:text="${testTaskName}" style="color:red"></span>
+    <br>
+    测试执行链接：<a th:href="${testTaskUrl}" style="color:blue">请点击</a>
+
+</span>
+
+</body>
+</html>
