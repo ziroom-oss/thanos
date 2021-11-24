@@ -16,14 +16,10 @@ import com.ziroom.qa.quality.defende.provider.caseRepository.mapper.AutoApplicat
 import com.ziroom.qa.quality.defende.provider.caseRepository.service.IAutoApplicationPropertiesService;
 import com.ziroom.qa.quality.defende.provider.caseRepository.service.IAutoSingleApiCaseService;
 import com.ziroom.qa.quality.defende.provider.caseRepository.service.IAutoSingleApiService;
-import com.ziroom.qa.quality.defende.provider.outinterface.client.OmegaApiClient;
-import com.ziroom.qa.quality.defende.provider.outinterface.client.omega.DetailApplicationVo;
-import com.ziroom.qa.quality.defende.provider.outinterface.client.omega.OmegaPageInfo;
 import com.ziroom.qa.quality.defende.provider.outinterface.client.service.MatrixService;
 import com.ziroom.qa.quality.defende.provider.outinterface.client.service.OmegaService;
 import com.ziroom.qa.quality.defende.provider.outinterface.client.service.WeChatService;
 import com.ziroom.qa.quality.defende.provider.result.CustomException;
-import com.ziroom.qa.quality.defende.provider.result.RestResultVo;
 import com.ziroom.qa.quality.defende.provider.util.DateUtil;
 import com.ziroom.qa.quality.defende.provider.util.ExampleBuilder;
 import com.ziroom.qa.quality.defende.provider.util.SwaggerJsonUtils;
@@ -65,8 +61,6 @@ import java.util.stream.Collectors;
 @Slf4j
 public class AutoApplicationPropertiesServiceImpl extends ServiceImpl<AutoApplicationPropertiesMapper, AutoApplicationProperties> implements IAutoApplicationPropertiesService {
     @Autowired
-    private OmegaApiClient omegaApiClient;
-    @Autowired
     private IAutoSingleApiService autoSingleApiService;
     @Autowired
     private IAutoSingleApiCaseService autoSingleApiCaseService;
@@ -98,30 +92,7 @@ public class AutoApplicationPropertiesServiceImpl extends ServiceImpl<AutoApplic
 
     @Override
     public String getApplicationName(String domain) {
-        domain = domain.replace("http://", "").replace("https://", "");
-        RestResultVo<OmegaPageInfo<DetailApplicationVo>> omegaPageInfoRestResult = omegaApiClient.allAppByDomainNameLK(domain.substring(0, domain.indexOf(".")));
-        List<DetailApplicationVo> list = null;
-        try {
-            list = omegaPageInfoRestResult.getData().getList();
-        } catch (Exception e) {
-            log.error("根据域名名找到应用，domain[{}],e", domain, e);
-            return null;
-        }
-        if (list.size() <= 0) {
-            throw new CustomException("找不到应用，请去omega中修改【项目域名】");
-        }
-        String finalDomain = domain;
-        List<DetailApplicationVo> collect = list.stream().filter(item -> {
-                    return item.getEnvInfoList().stream().filter(
-                            envInfo -> finalDomain.equals(envInfo.getEnvDomain())).collect(Collectors.toList()).size() > 0;
-                }
-        ).collect(Collectors.toList());
-        if (collect != null && collect.size() > 0) {
-            return collect.get(0).getApplicationName();
-        } else {
-//            没有equals瞎给一个
-            return list.get(0).getApplicationName();
-        }
+        return omegaService.getApplicationNameByDomain(domain);
     }
 
     @Override

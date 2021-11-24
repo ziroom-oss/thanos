@@ -26,7 +26,7 @@
 <span>整体进度：<span th:text="${dailyReportVo.dailyReportSum.testcaseRateStr}"></span></span>
 <table>
     <tr>
-        <td colspan="9" style="height: 150px" th:text="${emailRemark}"></td>
+        <td colspan="9" style="height: 150px" th:utext="${emailRemark}"></td>
     </tr>
     <tr>
         <th>项目名称</th>

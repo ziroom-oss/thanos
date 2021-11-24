@@ -1,10 +1,8 @@
 package com.ziroom.qa.quality.defende.provider.outinterface.client.service;
 
-import com.ziroom.qa.quality.defende.provider.outinterface.client.WeChatRobotApi;
 import com.ziroom.qa.quality.defende.provider.properties.WeChatProperties;
 import com.ziroom.qa.quality.defende.provider.vo.outvo.SendTaskMsgVo;
 import com.ziroom.qa.quality.defende.provider.vo.wechat.Message;
-import com.ziroom.qa.quality.defende.provider.vo.wechat.WechatResult;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,8 +19,6 @@ import java.util.stream.Collectors;
 @Service
 public class WeChatService {
 
-    @Autowired
-    private WeChatRobotApi weChatRobotApi;
     @Autowired
     private WeChatProperties weChatProperties;
     @Value("${quality.baseurl}")
@@ -112,8 +108,8 @@ public class WeChatService {
         message.setToken(weChatProperties.getToken());
         message.setModelCode(weChatProperties.getTemplateId());
         log.info("message[{}]", message);
-        WechatResult result = weChatRobotApi.sendWeChatMsg(message);
-        log.info("{}-{}", result.getCode(), result.getMessage());
+//        WechatResult result = weChatRobotApi.sendWeChatMsg(message);
+//        log.info("{}-{}", result.getCode(), result.getMessage());
     }
 
 }

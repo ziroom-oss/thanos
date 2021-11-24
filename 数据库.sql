@@ -972,6 +972,6 @@ CREATE TABLE `user`  (
 -- ----------------------------
 -- Records of user
 -- ----------------------------
-INSERT INTO `user` VALUES (1, '100000', 'zhangs1', '张三', '1000', '效能平台研发部', '2021-10-26 18:14:19', '2021-11-03 10:40:12', 'superAdmin', 2, NULL);
-
+INSERT INTO `qu_thanos`.`user` (`id`, `uid`, `user_name`, `nick_name`, `tree_path`, `ehr_group`, `create_time`, `update_time`, `role`, `user_type`, `password`) VALUES (1, '10000', 'zhangsan', '张三', '10000', '软件研发部', '2021-10-26 18:14:19', '2021-11-03 10:40:12', 'superAdmin', 2, 'e10adc3949ba59abbe56e057f20f883e');
+-- 密码为：123456
 SET FOREIGN_KEY_CHECKS = 1;

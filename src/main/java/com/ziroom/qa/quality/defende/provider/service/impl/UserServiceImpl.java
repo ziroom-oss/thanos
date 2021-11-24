@@ -2,6 +2,7 @@ package com.ziroom.qa.quality.defende.provider.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.ziroom.qa.quality.defende.provider.constant.enums.UserRoleEnum;
 import com.ziroom.qa.quality.defende.provider.entity.User;
 import com.ziroom.qa.quality.defende.provider.mapper.UserMapper;
 import com.ziroom.qa.quality.defende.provider.result.CustomException;
@@ -90,7 +91,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         User newUser = new User();
         newUser.setUserName(user.getUserName());
         newUser.setUserType(2);
-        newUser.setRole("user");
+        newUser.setRole(UserRoleEnum.ROLE_USER.getName());
         newUser.setTreePath(user.getTreePath());
         newUser.setEhrGroup("");
         newUser.setPassword(MD5Util.MD5Encode(user.getPassword()));
@@ -158,14 +159,17 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
      * @param userToken
      */
     @Override
-    public void userDelete(String userToken) {
+    public void userDelete(String userToken, String userName) {
         UserVo userVo = this.getByToken(userToken);
-        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("user_name", userVo.getUserName());
-        boolean flag = super.remove(queryWrapper);
-        if (flag) {
-            this.userLogout(userToken);
+        if (Objects.isNull(userVo)) {
+            throw new CustomException("用户未登陆！！！");
         }
+        if (!"superAdmin".equals(userVo.getRole())) {
+            throw new CustomException("该登录用户没有权限删除！！！");
+        }
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("user_name", userName);
+        super.remove(queryWrapper);
     }
 
     @Override
@@ -174,6 +178,56 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             return null;
         }
         return (UserVo) redisUtil.get(userToken);
+    }
+
+    /**
+     * 根据用户英文名称集合获取用户信息集合
+     *
+     * @param userNameList
+     * @return
+     */
+    @Override
+    public List<User> getUserListByUserNames(List<String> userNameList) {
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        queryWrapper.in("user_name", userNameList);
+        return super.list(queryWrapper);
+    }
+
+    /**
+     * 根据部门编号获取用户信息
+     *
+     * @param deptCode
+     * @return
+     */
+    @Override
+    public List<User> getUserListByDeptCode(String deptCode) {
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        queryWrapper.like(StringUtils.isNotBlank(deptCode), "tree_path", deptCode);
+        return super.list(queryWrapper);
+    }
+
+    /**
+     * 修改密码
+     *
+     * @param user
+     */
+    @Override
+    public void userUpdatePwd(UserVo user) {
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        queryWrapper.in("user_name", user.getUserName());
+        User oldUser = super.getOne(queryWrapper);
+        if (StringUtils.isBlank(user.getNewPassword())) {
+            throw new CustomException("密码不能为空 ！！！");
+        }
+        if (user.getNewPassword().length() < 6) {
+            throw new CustomException("密码长度必须大于6 ！！！");
+        }
+        if (MD5Util.MD5Encode(user.getNewPassword()).equals(oldUser.getPassword())) {
+            throw new CustomException("新旧密码不能相同 ！！！");
+        }
+        oldUser.setPassword(MD5Util.MD5Encode(user.getNewPassword()));
+        oldUser.setUpdateTime(LocalDateTime.now());
+        super.updateById(oldUser);
     }
 
 }

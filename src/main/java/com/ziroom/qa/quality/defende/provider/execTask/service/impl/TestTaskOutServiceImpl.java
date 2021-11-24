@@ -12,14 +12,13 @@ import com.ziroom.qa.quality.defende.provider.execTask.service.TaskTestCaseServi
 import com.ziroom.qa.quality.defende.provider.execTask.service.TestExecutionService;
 import com.ziroom.qa.quality.defende.provider.execTask.service.TestTaskOutService;
 import com.ziroom.qa.quality.defende.provider.execTask.service.TestTaskService;
-import com.ziroom.qa.quality.defende.provider.outinterface.client.OmegaApiClient;
+import com.ziroom.qa.quality.defende.provider.outinterface.client.service.MatrixService;
 import com.ziroom.qa.quality.defende.provider.outinterface.client.service.OmegaService;
+import com.ziroom.qa.quality.defende.provider.outinterface.client.service.WeChatService;
 import com.ziroom.qa.quality.defende.provider.properties.JiraProperties;
 import com.ziroom.qa.quality.defende.provider.result.CustomException;
-import com.ziroom.qa.quality.defende.provider.outinterface.client.service.MatrixService;
 import com.ziroom.qa.quality.defende.provider.service.SendMailService;
 import com.ziroom.qa.quality.defende.provider.service.TestStatisticService;
-import com.ziroom.qa.quality.defende.provider.outinterface.client.service.WeChatService;
 import com.ziroom.qa.quality.defende.provider.util.JiraUtils;
 import com.ziroom.qa.quality.defende.provider.util.MyUtil;
 import com.ziroom.qa.quality.defende.provider.util.TimeUtil;
@@ -64,8 +63,6 @@ public class TestTaskOutServiceImpl implements TestTaskOutService {
     private JiraProperties jiraProperties;
     @Autowired
     private TestStatisticService testStatisticService;
-    @Autowired
-    private OmegaApiClient omegaApiClient;
     @Autowired
     private TaskTestCaseService taskTestCaseService;
     @Autowired
@@ -457,7 +454,6 @@ public class TestTaskOutServiceImpl implements TestTaskOutService {
     }
 
 
-
     /**
      * 获取测试执行信息
      *
@@ -649,7 +645,6 @@ public class TestTaskOutServiceImpl implements TestTaskOutService {
         testExecutionService.updateCount(testTask.getId(), null);
         return TestCenterConstants.RES_MSG_SUCCESS;
     }
-
 
 
 //    public static void main(String[] args) {

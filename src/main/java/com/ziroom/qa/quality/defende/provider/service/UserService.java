@@ -56,11 +56,12 @@ public interface UserService extends IService<User> {
     void userLogout(String userToken);
 
     /**
-     * 注销
+     * 删除
      *
      * @param userToken
+     * @param userName
      */
-    void userDelete(String userToken);
+    void userDelete(String userToken, String userName);
 
     /**
      * 根据token获取用户信息
@@ -69,4 +70,26 @@ public interface UserService extends IService<User> {
      * @return
      */
     UserVo getByToken(String userToken);
+
+    /**
+     * 根据用户英文名称集合获取用户信息集合
+     *
+     * @param userNameList
+     * @return
+     */
+    List<User> getUserListByUserNames(List<String> userNameList);
+
+    /**
+     * 根据部门编号获取用户信息
+     *
+     * @param deptCode
+     * @return
+     */
+    List<User> getUserListByDeptCode(String deptCode);
+
+    /**
+     * 修改密码
+     * @param user
+     */
+    void userUpdatePwd(UserVo user);
 }

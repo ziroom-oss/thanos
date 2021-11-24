@@ -25,7 +25,7 @@ public class WebInterceptorConfig implements WebMvcConfigurer {
             public void addInterceptors(InterceptorRegistry registry) {
                 registry.addInterceptor(loginInterceptor)
                         .addPathPatterns("/**")
-                        .excludePathPatterns("/error/**", "/testStatistic/*", "/outTestTask/*", "/swagger-resources/**", "/swagger-ui.html", "/csrf");
+                        .excludePathPatterns("/testStatistic/*", "/outTestTask/*", "/swagger-ui.html", "/webjars/**", "/swagger-resources/**", "/error/**", "/api-docs/**", "/v2/**", "/csrf");
             }
 
 //            /**

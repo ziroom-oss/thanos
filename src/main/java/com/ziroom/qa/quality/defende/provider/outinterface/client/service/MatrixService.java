@@ -2,31 +2,29 @@ package com.ziroom.qa.quality.defende.provider.outinterface.client.service;
 
 
 import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
-import com.alibaba.fastjson.TypeReference;
 import com.google.common.collect.Lists;
-import com.google.gson.Gson;
 import com.ziroom.qa.quality.defende.provider.entity.User;
-import com.ziroom.qa.quality.defende.provider.outinterface.client.MatrixApiClient;
 import com.ziroom.qa.quality.defende.provider.service.UserService;
 import com.ziroom.qa.quality.defende.provider.util.RedisUtil;
-import com.ziroom.qa.quality.defende.provider.vo.*;
+import com.ziroom.qa.quality.defende.provider.vo.EhrUserDetail;
+import com.ziroom.qa.quality.defende.provider.vo.MatrixUserDetail;
 import lombok.extern.slf4j.Slf4j;
-import okhttp3.MediaType;
-import okhttp3.RequestBody;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
 public class MatrixService {
 
-    @Autowired
-    private MatrixApiClient matrixApiClient;
     @Autowired
     private RedisUtil redisUtil;
     @Value("${ziroom.ehr.defendeRediskey}")
@@ -41,26 +39,17 @@ public class MatrixService {
         //1. 声明返回值
 
         List<EhrUserDetail> ehrUserDetailList = Lists.newArrayList();
-        long start = System.currentTimeMillis();
-        //2. 调用矩阵平台获取互联网团队的所有的用户
-        EhrUserSearchDetailDto ehrUserSearchDetailDto = new EhrUserSearchDetailDto();
-        ehrUserSearchDetailDto.setDeptCode(deptCode);
-        RequestBody body = RequestBody.create(MediaType.parse("application/json;charset=UTF-8"), new Gson().toJson(ehrUserSearchDetailDto));
-        JSONObject result = matrixApiClient.getUserDetailBySearchInfoFromMatrix(body);
-        EhrUserResultDto ehrUserResult = result.getJSONObject("data").toJavaObject(EhrUserResultDto.class);
-        List<EhrUserSearchDetailDto> userList = ehrUserResult.getUserList();
-        log.info("从矩阵平台获取用户的总数:{}", userList.size());
-        HashSet<EhrUserSearchDetailDto> userSet = new HashSet<>(userList);
-        for (EhrUserSearchDetailDto userSearchDetailDto : userSet) {
-            EhrUserDetail ehrUserDetail = new EhrUserDetail();
-            ehrUserDetail.setName(userSearchDetailDto.getUserName());//中文名称
-            ehrUserDetail.setAdCode(userSearchDetailDto.getUserCode());//邮箱前缀
-            ehrUserDetail.setEmplid(userSearchDetailDto.getEmpCode());//员工工号
-            ehrUserDetail.setUserType(userSearchDetailDto.getUserType());//类型 1 正式 2 外包
-            ehrUserDetailList.add(ehrUserDetail);
+        List<User> userList = userService.getUserListByDeptCode(deptCode);
+        if (CollectionUtils.isNotEmpty(userList)) {
+            for (User user : userList) {
+                EhrUserDetail ehrUserDetail = new EhrUserDetail();
+                ehrUserDetail.setName(user.getNickName());//中文名称
+                ehrUserDetail.setAdCode(user.getUserName());//邮箱前缀
+                ehrUserDetail.setEmplid(user.getUid());//员工工号
+                ehrUserDetail.setUserType(user.getUserType() + "");//类型 1 正式 2 外包
+                ehrUserDetailList.add(ehrUserDetail);
+            }
         }
-        long endTime = System.currentTimeMillis();
-        log.info("调用ehr查询每个用的总时间长：" + (endTime - start));
         return ehrUserDetailList;
     }
 
@@ -82,18 +71,6 @@ public class MatrixService {
         redisUtil.setFewHour(redisKey, ehrUserDetailList, redisTimeOutHours);
     }
 
-    /***
-     * 根据邮箱前缀获取用户的所有信息
-     * @param userName
-     */
-    public OutsourcingPersonnelVo queryOutsourcingPersonnelFromMatrix(String userName) {
-        JSONObject result = matrixApiClient.ajaxQueryOutsourcingPersonnel(userName);
-        if (Objects.nonNull(result) && Objects.nonNull(result.getJSONObject("data"))) {
-            return result.getJSONObject("data").toJavaObject(OutsourcingPersonnelVo.class);
-        }
-        return null;
-    }
-
     /**
      * 根据邮箱前缀集合获取用户信息
      *
@@ -104,18 +81,30 @@ public class MatrixService {
         if (CollectionUtils.isEmpty(emailPreList)) {
             return null;
         }
-        RequestBody body = RequestBody.create(MediaType.parse("application/json;charset=UTF-8"), new Gson().toJson(emailPreList));
         Map<String, MatrixUserDetail> map = null;
-        try {
-            JSONObject result = matrixApiClient.getUserDetailByEmailPre(body);
-            map = result.getObject("data", new TypeReference<Map<String, MatrixUserDetail>>() {
+        List<User> userList = userService.getUserListByUserNames(emailPreList);
+        if (CollectionUtils.isNotEmpty(userList)) {
+            List<MatrixUserDetail> matrixUserList = new ArrayList<>();
+            userList.stream().forEach(user -> {
+                MatrixUserDetail matrixUser = new MatrixUserDetail();
+                matrixUser.setUserCode(user.getUserName());
+                matrixUser.setUserName(user.getNickName());
+                matrixUser.setDeptCode(user.getTreePath());
+                matrixUser.setDeptName(user.getEhrGroup());
+                matrixUser.setUserType(user.getUserType() + "");//类型 1 正式 2 外包
+                matrixUserList.add(matrixUser);
             });
-        } catch (Exception e) {
-            log.error("getUserDetailByEmailPre获取用户信息失败,emailPreList == {}：", emailPreList, e);
+            map = matrixUserList.stream().collect(Collectors.toMap(MatrixUserDetail::getUserCode, Function.identity()));
         }
         return map;
     }
 
+    /**
+     * 根据用户名称获取用户信息集合（like查询）
+     *
+     * @param userName
+     * @return
+     */
     public List<EhrUserDetail> getEhrUserDetailLikeUserName(String userName) {
         List<EhrUserDetail> ehrUserDetailList = new ArrayList<>();
 
@@ -131,7 +120,6 @@ public class MatrixService {
             ehrUserDetail.setUserType(user.getUserType() + "");//类型 1 正式 2 外包
             ehrUserDetailList.add(ehrUserDetail);
         });
-
         return ehrUserDetailList;
     }
 }

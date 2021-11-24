@@ -1,7 +1,6 @@
 package com.ziroom.qa.quality.defende.provider.execTask.service.impl;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -17,7 +16,6 @@ import com.ziroom.qa.quality.defende.provider.entity.User;
 import com.ziroom.qa.quality.defende.provider.execTask.entity.TaskTestCase;
 import com.ziroom.qa.quality.defende.provider.execTask.entity.TestExecution;
 import com.ziroom.qa.quality.defende.provider.execTask.entity.TestTask;
-import com.ziroom.qa.quality.defende.provider.execTask.entity.dto.JiraGroupDTO;
 import com.ziroom.qa.quality.defende.provider.execTask.entity.dto.RunCaseByIdListDto;
 import com.ziroom.qa.quality.defende.provider.execTask.entity.vo.AutoExecutionRecordVo;
 import com.ziroom.qa.quality.defende.provider.execTask.entity.vo.DemandVO;
@@ -26,7 +24,6 @@ import com.ziroom.qa.quality.defende.provider.execTask.service.IAutoTestCaseExec
 import com.ziroom.qa.quality.defende.provider.execTask.service.TaskTestCaseService;
 import com.ziroom.qa.quality.defende.provider.execTask.service.TestExecutionService;
 import com.ziroom.qa.quality.defende.provider.execTask.service.TestTaskService;
-import com.ziroom.qa.quality.defende.provider.outinterface.client.JiraApiClient;
 import com.ziroom.qa.quality.defende.provider.result.CustomException;
 import com.ziroom.qa.quality.defende.provider.result.RestResultVo;
 import com.ziroom.qa.quality.defende.provider.service.UserService;
@@ -41,7 +38,6 @@ import lombok.extern.slf4j.Slf4j;
 import net.rcarz.jiraclient.Issue;
 import net.rcarz.jiraclient.JiraException;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,8 +66,6 @@ public class TestExecutionServiceImpl extends ServiceImpl<TestExecutionMapper, T
     @Autowired
     @Lazy
     private IAutoTestCaseExecuteService autoTestCaseExecuteService;
-    @Autowired
-    private JiraApiClient jiraApiClient;
 
     public void autoExetionTask(long executionTaskId, String userName, List<AutoExecutionRecordVo> autoRecordList) {
         if (CollectionUtils.isEmpty(autoRecordList)) {
@@ -184,14 +178,14 @@ public class TestExecutionServiceImpl extends ServiceImpl<TestExecutionMapper, T
     public DemandVO queryDemandInfo(Long taskId, String userName) {
         DemandVO demandVO = new DemandVO();
         // 获取 缺陷所属部门
-        JSONObject jsonObject = jiraApiClient.getJiraGroup(2000, null);
-        if (Objects.nonNull(jsonObject)) {
-            Integer groupCount = Integer.parseInt(jsonObject.get("total").toString());
-            if (groupCount > 0) {
-                List<JiraGroupDTO> groupList = jsonObject.getJSONArray("groups").toJavaList(JiraGroupDTO.class);
-                demandVO.setBugDeptList(groupList);
-            }
-        }
+//        JSONObject jsonObject = jiraApiClient.getJiraGroup(2000, null);
+//        if (Objects.nonNull(jsonObject)) {
+//            Integer groupCount = Integer.parseInt(jsonObject.get("total").toString());
+//            if (groupCount > 0) {
+//                List<JiraGroupDTO> groupList = jsonObject.getJSONArray("groups").toJavaList(JiraGroupDTO.class);
+//                demandVO.setBugDeptList(groupList);
+//            }
+//        }
         // 获取 缺陷模块
         TestTask testTask = testTaskService.getById(taskId);
         List<String> moduleList = JiraUtils.getComponentsAllowedValues(testTask.getRelationRequirement().split("-")[0], "缺陷");

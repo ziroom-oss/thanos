@@ -20,7 +20,6 @@ import com.ziroom.qa.quality.defende.provider.execTask.mapper.TestTaskMapper;
 import com.ziroom.qa.quality.defende.provider.execTask.service.TaskTestCaseService;
 import com.ziroom.qa.quality.defende.provider.execTask.service.TestExecutionService;
 import com.ziroom.qa.quality.defende.provider.execTask.service.TestTaskService;
-import com.ziroom.qa.quality.defende.provider.outinterface.client.ArkApiClient;
 import com.ziroom.qa.quality.defende.provider.outinterface.client.service.EhrService;
 import com.ziroom.qa.quality.defende.provider.outinterface.client.service.MatrixService;
 import com.ziroom.qa.quality.defende.provider.result.CustomException;
@@ -67,8 +66,6 @@ public class TestTaskServiceImpl extends ServiceImpl<TestTaskMapper, TestTask> i
     private TopicTaskRelService topicTaskRelService;
     @Autowired
     private MatrixService matrixService;
-    @Autowired
-    private ArkApiClient arkApiClient;
     @Autowired
     private SendMailService sendMailService;
 
@@ -481,10 +478,10 @@ public class TestTaskServiceImpl extends ServiceImpl<TestTaskMapper, TestTask> i
      */
     @Override
     public List<ArkAppDTO> getAppInfoList() {
-        RestResultVo<List<ArkAppDTO>> res = arkApiClient.getAllApp();
-        if (Objects.nonNull(res)) {
-            return res.getData();
-        }
+//        RestResultVo<List<ArkAppDTO>> res = arkApiClient.getAllApp();
+//        if (Objects.nonNull(res)) {
+//            return res.getData();
+//        }
         return new ArrayList<>();
     }
 
