@@ -1,26 +1,25 @@
 package com.ziroom.qa.quality.defende.provider.outinterface.client.service;
 
-import com.ziroom.qa.quality.defende.provider.properties.WeChatProperties;
 import com.ziroom.qa.quality.defende.provider.vo.outvo.SendTaskMsgVo;
 import com.ziroom.qa.quality.defende.provider.vo.wechat.Message;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * 通过微信发送消息
+ */
 @Slf4j
 @Service
 public class WeChatService {
 
-    @Autowired
-    private WeChatProperties weChatProperties;
+
     @Value("${quality.baseurl}")
     private String qualityUrl;
 
@@ -93,21 +92,21 @@ public class WeChatService {
     }
 
     public void sendDeptRankRobotMsg(String content) {
-        Message messageBody = new Message();
-        messageBody.setRobotKey(weChatProperties.getRobotKey());
-        messageBody.setMsgType("markdown");
-        Map<String, Object> params = new HashMap<String, Object>(1);
-        params.put("content", content);
-        messageBody.setParams(params);
-        messageBody.setPushType("group_chat_robot");
-        this.sendMsg(messageBody);
+//        Message messageBody = new Message();
+//        messageBody.setRobotKey(weChatProperties.getRobotKey());
+//        messageBody.setMsgType("markdown");
+//        Map<String, Object> params = new HashMap<String, Object>(1);
+//        params.put("content", content);
+//        messageBody.setParams(params);
+//        messageBody.setPushType("group_chat_robot");
+//        this.sendMsg(messageBody);
     }
 
 
     private void sendMsg(Message message) {
-        message.setToken(weChatProperties.getToken());
-        message.setModelCode(weChatProperties.getTemplateId());
-        log.info("message[{}]", message);
+//        message.setToken(weChatProperties.getToken());
+//        message.setModelCode(weChatProperties.getTemplateId());
+//        log.info("message[{}]", message);
 //        WechatResult result = weChatRobotApi.sendWeChatMsg(message);
 //        log.info("{}-{}", result.getCode(), result.getMessage());
     }

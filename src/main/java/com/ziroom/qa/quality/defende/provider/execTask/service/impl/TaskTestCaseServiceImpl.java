@@ -20,10 +20,9 @@ import com.ziroom.qa.quality.defende.provider.execTask.mapper.TaskTestCaseMapper
 import com.ziroom.qa.quality.defende.provider.execTask.service.TaskTestCaseService;
 import com.ziroom.qa.quality.defende.provider.execTask.service.TestExecutionService;
 import com.ziroom.qa.quality.defende.provider.execTask.service.TestTaskService;
-import com.ziroom.qa.quality.defende.provider.result.CustomException;
 import com.ziroom.qa.quality.defende.provider.outinterface.client.service.MatrixService;
+import com.ziroom.qa.quality.defende.provider.result.CustomException;
 import com.ziroom.qa.quality.defende.provider.service.UserService;
-import com.ziroom.qa.quality.defende.provider.util.JiraUtils;
 import com.ziroom.qa.quality.defende.provider.vo.MatrixUserDetail;
 import com.ziroom.qa.quality.defende.provider.vo.Pagination;
 import com.ziroom.qa.quality.defende.provider.vo.TaskTestCaseVo;
@@ -272,7 +271,7 @@ public class TaskTestCaseServiceImpl extends ServiceImpl<TaskTestCaseMapper, Tas
                     .orElse(""));
             // bug连接
             if (StringUtils.isNotBlank(taskTest.getRelationBug())) {
-                taskTest.setRelationBugUrl(JiraUtils.getJiraUrl(taskTest.getRelationBug()));
+                taskTest.setRelationBugUrl("测试bug地址");
             }
         });
         return newtaskPage;

@@ -1,9 +1,6 @@
 package com.ziroom.qa.quality.defende.provider.execTask.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.ziroom.qa.quality.defende.provider.config.OperateLogAnnotation;
-import com.ziroom.qa.quality.defende.provider.constant.OperateLogModuleConstants;
-import com.ziroom.qa.quality.defende.provider.constant.OperateLogTypeConstants;
 import com.ziroom.qa.quality.defende.provider.constant.enums.TestExecutionTypeEnum;
 import com.ziroom.qa.quality.defende.provider.constant.enums.TestTaskStatusEnum;
 import com.ziroom.qa.quality.defende.provider.constant.enums.TestTaskTypeEnum;
@@ -15,12 +12,10 @@ import com.ziroom.qa.quality.defende.provider.execTask.entity.vo.ComplateAndEmai
 import com.ziroom.qa.quality.defende.provider.execTask.service.TaskTestCaseService;
 import com.ziroom.qa.quality.defende.provider.execTask.service.TestTaskService;
 import com.ziroom.qa.quality.defende.provider.result.RestResultVo;
-import com.ziroom.qa.quality.defende.provider.util.JiraUtils;
 import com.ziroom.qa.quality.defende.provider.vo.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import net.rcarz.jiraclient.Issue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -94,7 +89,6 @@ public class TestTaskController {
 
     @ApiOperation("保存或更新测试执行任务")
     @PostMapping("/saveOrUpdateTestTask")
-    @OperateLogAnnotation(moduleName = OperateLogModuleConstants.TESTTASK, option = OperateLogTypeConstants.SAVEORUPDATE)
     public RestResultVo saveOrUpdateTestTask(@RequestBody TestTask testTask, HttpServletRequest request) {
         String userName = request.getHeader("userName");
         RestResultVo restResultVo;
@@ -141,10 +135,7 @@ public class TestTaskController {
     @ApiOperation("获取测试 task 对应的测试报告")
     @GetMapping("/getTestReportSummaryByTaskId")
     public RestResultVo getTestReportSummaryByTaskId(@RequestParam("taskId") Long taskId) {
-        log.info("测试任务的 taskId 为：{}", taskId);
-
         TestTask testTask = testTaskService.getById(taskId);
-
         TestReportSummaryVo summaryVo = new TestReportSummaryVo();
         Integer totalCount = Objects.isNull(testTask.getTestcaseCount()) ? 0 : testTask.getTestcaseCount();
         summaryVo.setTaskName(testTask.getTaskName());
@@ -163,16 +154,7 @@ public class TestTaskController {
             summaryVo.setFailedRatio(df.format(((double) failCount / (double) totalCount) * 100) + "%");
             summaryVo.setSkippedRatio(df.format(((double) skipCount / (double) totalCount) * 100) + "%");
         }
-        try {
-            long start = System.currentTimeMillis();
-            Issue issue = JiraUtils.getJiraIssueByIssueKey(testTask.getRelationRequirement());
-            long end = System.currentTimeMillis();
-            log.info("调用jira查询消息接口耗时：{} ms", end - start);
-            String summary = issue.getSummary();
-            summaryVo.setJiraRequirement(summary);
-        } catch (Exception e) {
-            summaryVo.setJiraRequirement("TEST BUG");
-        }
+        summaryVo.setJiraRequirement("TEST BUG");
         return RestResultVo.fromData(summaryVo);
     }
 
@@ -199,7 +181,6 @@ public class TestTaskController {
         return RestResultVo.fromData(testTaskService.getTestTaskDetailById(id));
     }
 
-    @OperateLogAnnotation(moduleName = OperateLogModuleConstants.TESTTASK, option = OperateLogTypeConstants.DETELE)
     @ApiOperation("批量删除测试执行任务")
     @GetMapping(value = "/batchDeleteTestTask", produces = {"application/json;charset=UTF-8"})
     public RestResultVo<String> batchDeleteTestTask(@RequestHeader String userName, @RequestParam("idList") List<Long> idList) {
@@ -259,14 +240,13 @@ public class TestTaskController {
         testTaskService.completeTaskAndEmail(complateAndEmailVO, userName);
         return RestResultVo.fromSuccess("成功");
     }
+
     @ApiOperation("完成测试执行任务并发送邮件")
     @PostMapping("/sendTestTaskEmail")
     public RestResultVo sendTestTaskEmail(@RequestHeader String userName, @RequestBody ComplateAndEmailVO complateAndEmailVO) {
         testTaskService.completeTaskAndEmail(complateAndEmailVO, userName);
         return RestResultVo.fromSuccess("成功");
     }
-
-
 
 
 }

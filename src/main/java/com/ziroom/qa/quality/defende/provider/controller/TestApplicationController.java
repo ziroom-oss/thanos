@@ -1,14 +1,11 @@
 package com.ziroom.qa.quality.defende.provider.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.ziroom.qa.quality.defende.provider.config.OperateLogAnnotation;
-import com.ziroom.qa.quality.defende.provider.constant.OperateLogModuleConstants;
-import com.ziroom.qa.quality.defende.provider.constant.OperateLogTypeConstants;
 import com.ziroom.qa.quality.defende.provider.entity.TestApplication;
+import com.ziroom.qa.quality.defende.provider.result.RestResultVo;
 import com.ziroom.qa.quality.defende.provider.service.TestApplicationService;
 import com.ziroom.qa.quality.defende.provider.vo.ApplicationModuleTree;
 import com.ziroom.qa.quality.defende.provider.vo.Pagination;
-import com.ziroom.qa.quality.defende.provider.result.RestResultVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -33,7 +30,6 @@ public class TestApplicationController {
         return RestResultVo.fromData(testApplicationService.queryTestApplicationByPage(pagination));
     }
 
-    @OperateLogAnnotation(moduleName = OperateLogModuleConstants.APPLICATION, option = OperateLogTypeConstants.DETAIL)
     @ApiOperation("获取所属应用详情")
     @GetMapping(value = "/queryTestApplicationDetailById", produces = {"application/json;charset=UTF-8"})
     public RestResultVo<TestApplication> queryTestApplicationDetailById(@RequestParam("id") Long id) {
@@ -41,7 +37,6 @@ public class TestApplicationController {
         return RestResultVo.fromData(testApplication);
     }
 
-    @OperateLogAnnotation(moduleName = OperateLogModuleConstants.APPLICATION, option = OperateLogTypeConstants.SAVEORUPDATE)
     @ApiOperation("所属应用保存或更新")
     @PostMapping("/saveOrUpdateTestApplication")
     public RestResultVo saveOrUpdateTestApplication(@RequestBody TestApplication testApplication, HttpServletRequest request) {

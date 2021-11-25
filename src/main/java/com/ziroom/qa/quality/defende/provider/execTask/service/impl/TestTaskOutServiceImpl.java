@@ -15,11 +15,9 @@ import com.ziroom.qa.quality.defende.provider.execTask.service.TestTaskService;
 import com.ziroom.qa.quality.defende.provider.outinterface.client.service.MatrixService;
 import com.ziroom.qa.quality.defende.provider.outinterface.client.service.OmegaService;
 import com.ziroom.qa.quality.defende.provider.outinterface.client.service.WeChatService;
-import com.ziroom.qa.quality.defende.provider.properties.JiraProperties;
 import com.ziroom.qa.quality.defende.provider.result.CustomException;
 import com.ziroom.qa.quality.defende.provider.service.SendMailService;
 import com.ziroom.qa.quality.defende.provider.service.TestStatisticService;
-import com.ziroom.qa.quality.defende.provider.util.JiraUtils;
 import com.ziroom.qa.quality.defende.provider.util.MyUtil;
 import com.ziroom.qa.quality.defende.provider.util.TimeUtil;
 import com.ziroom.qa.quality.defende.provider.vo.MatrixUserDetail;
@@ -59,8 +57,6 @@ public class TestTaskOutServiceImpl implements TestTaskOutService {
     private SendMailService sendMailService;
     @Autowired
     private WeChatService weChatService;
-    @Autowired
-    private JiraProperties jiraProperties;
     @Autowired
     private TestStatisticService testStatisticService;
     @Autowired
@@ -166,18 +162,18 @@ public class TestTaskOutServiceImpl implements TestTaskOutService {
             bugIdList.stream().forEach(bugId -> {
                 TestReportBugListVo bugVo = new TestReportBugListVo();
                 try {
-                    Issue issue = JiraUtils.getJiraIssueByIssueKey(bugId);
-                    // 放入bug状态信息
-                    bugVo.setBugStatus(Objects.isNull(issue.getStatus().getId()) ? "" : BugStatusEnum.getStatusValueByKey(Long.valueOf(issue.getStatus().getId())));
-                    bugVo.setBugStatusId(Long.valueOf(issue.getStatus().getId()));
-                    // 放入bug优先级信息
-                    bugVo.setPriority(Objects.isNull(issue.getPriority().getId()) ? "" : BugLevelEnum.getLevelValueByKey(Long.valueOf(issue.getPriority().getId())));
-                    bugVo.setPriorityId(Long.valueOf(issue.getPriority().getId()));
+//                    Issue issue = JiraUtils.getJiraIssueByIssueKey(bugId);
+//                    // 放入bug状态信息
+//                    bugVo.setBugStatus(Objects.isNull(issue.getStatus().getId()) ? "" : BugStatusEnum.getStatusValueByKey(Long.valueOf(issue.getStatus().getId())));
+//                    bugVo.setBugStatusId(Long.valueOf(issue.getStatus().getId()));
+//                    // 放入bug优先级信息
+//                    bugVo.setPriority(Objects.isNull(issue.getPriority().getId()) ? "" : BugLevelEnum.getLevelValueByKey(Long.valueOf(issue.getPriority().getId())));
+//                    bugVo.setPriorityId(Long.valueOf(issue.getPriority().getId()));
                     // 放入bug终端类型信息
-                    Object obj = issue.getField("customfield_10508");
-                    bugVo.setBugEndType(Objects.isNull(obj) ? "" : JSON.parseObject(obj.toString()).getString("id"));
-                    bugVo.setBugEndTypeStr(Objects.isNull(obj) ? "" : JSON.parseObject(obj.toString()).getString("value"));
-                    bugVo.setDescription(issue.getSummary());
+//                    Object obj = issue.getField("customfield_10508");
+//                    bugVo.setBugEndType(Objects.isNull(obj) ? "" : JSON.parseObject(obj.toString()).getString("id"));
+//                    bugVo.setBugEndTypeStr(Objects.isNull(obj) ? "" : JSON.parseObject(obj.toString()).getString("value"));
+//                    bugVo.setDescription(issue.getSummary());
                 } catch (Exception e) {
                     log.error("调用jira信息失败", e);
                 }
@@ -344,7 +340,7 @@ public class TestTaskOutServiceImpl implements TestTaskOutService {
         TestTask testTask = this.saveRequestInfo4Jira(testLeader, issueKey, summary);
         // 创建发送消息给对应的测试主管
         String url = testTaskUrl + "&testExecutionType=1&taskId=" + testTask.getId();
-        String jiraUrl = jiraProperties.getBaseurl() + "brower/" + issueKey;
+        String jiraUrl = "xxxx.xxx.xxx/" + "brower/" + issueKey;
         try {
             sendMailService.sendJiraTestTaskMail(testLeader, url, jiraUrl, summary);
         } catch (MessagingException e) {
@@ -534,15 +530,15 @@ public class TestTaskOutServiceImpl implements TestTaskOutService {
             log.info("发送测试执行创建完成的消息,测试执行名称：{}，jiraid：{}，已经创建过了！！！", outReqVo.getTaskName(), outReqVo.getJiraId());
             return;
         }
-        String jiraUrl = jiraProperties.getBaseurl() + "brower/" + outReqVo.getJiraId();
+        String jiraUrl = "xxxx.xxx.xxx/" + "brower/" + outReqVo.getJiraId();
         Issue issue;
-        String jiraDesc = "";
-        try {
-            issue = JiraUtils.getJiraIssueByIssueKey(outReqVo.getJiraId());
-            jiraDesc = issue.getSummary();
-        } catch (Exception e) {
-            log.error("sendTestTaskInfo获取jira明细信息失败，但是不影响使用！", e);
-        }
+        String jiraDesc = "jira描述信息";
+//        try {
+//            issue = JiraUtils.getJiraIssueByIssueKey(outReqVo.getJiraId());
+//            jiraDesc = issue.getSummary();
+//        } catch (Exception e) {
+//            log.error("sendTestTaskInfo获取jira明细信息失败，但是不影响使用！", e);
+//        }
 
         List<String> userList = Arrays.asList(outReqVo.getDevUserName(), outReqVo.getTestUserName()).stream().distinct().collect(Collectors.toList());
         Map<String, MatrixUserDetail> userMap = matrixService.getUserDetailByEmailPre(userList);

@@ -250,17 +250,6 @@
             <artifactId>velocity</artifactId>
             <version>1.7</version>
         </dependency>
-        <dependency>
-            <groupId>org.apache.rocketmq</groupId>
-            <artifactId>rocketmq-client</artifactId>
-            <version>${rocketmq.client.version}</version>
-        </dependency>
-        <!-- swagger UI组件 -->
-<!--        <dependency>-->
-<!--            <groupId>com.github.xiaoymin</groupId>-->
-<!--            <artifactId>swagger-bootstrap-ui</artifactId>-->
-<!--            <version>${swagger.ui.version}</version>-->
-<!--        </dependency>-->
         <!-- swagger核心组件 -->
         <dependency>
             <groupId>io.springfox</groupId>

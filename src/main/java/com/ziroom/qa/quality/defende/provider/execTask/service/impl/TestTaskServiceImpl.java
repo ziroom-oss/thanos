@@ -1,6 +1,5 @@
 package com.ziroom.qa.quality.defende.provider.execTask.service.impl;
 
-import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -27,10 +26,8 @@ import com.ziroom.qa.quality.defende.provider.result.RestResultVo;
 import com.ziroom.qa.quality.defende.provider.service.SendMailService;
 import com.ziroom.qa.quality.defende.provider.service.TopicTaskRelService;
 import com.ziroom.qa.quality.defende.provider.service.UserService;
-import com.ziroom.qa.quality.defende.provider.util.JiraUtils;
 import com.ziroom.qa.quality.defende.provider.vo.*;
 import lombok.extern.slf4j.Slf4j;
-import net.rcarz.jiraclient.Issue;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,11 +80,11 @@ public class TestTaskServiceImpl extends ServiceImpl<TestTaskMapper, TestTask> i
         //1.1 验证测试执行任务名称唯一
         this.validateTestTaskName(testTask.getTaskName(), testTask.getId());
         //2. 校验jiraid
-        TestResultVo jiraRes = JiraUtils.validateJiraInfo(testTask.getRelationRequirement());
-        if (!jiraRes.getFlag()) {
-            throw new CustomException(jiraRes.getMsgRes());
-        }
-        String jiraId = jiraRes.getData().toString();
+//        TestResultVo jiraRes = JiraUtils.validateJiraInfo(testTask.getRelationRequirement());
+//        if (!jiraRes.getFlag()) {
+//            throw new CustomException(jiraRes.getMsgRes());
+//        }
+        String jiraId = testTask.getRelationRequirement();
         //3. 获取ehr的组织结构
         String ehrTreePath = testTask.getEhrTreePath();
         if (StringUtils.isNotBlank(ehrTreePath)) {
@@ -273,20 +270,20 @@ public class TestTaskServiceImpl extends ServiceImpl<TestTaskMapper, TestTask> i
             String issueKey = oneExecution.getRelationBug();
 
             try {
-                Issue issue = JiraUtils.getJiraIssueByIssueKey(issueKey);
-                String summary = issue.getSummary();
-                oneReport.setIssueKey(issueKey);
-                oneReport.setDescription(summary);
-                // 放入bug状态信息
-                oneReport.setBugStatus(Objects.isNull(issue.getStatus().getId()) ? "" : BugStatusEnum.getStatusValueByKey(Long.valueOf(issue.getStatus().getId())));
-                // 放入bug优先级信息
-                oneReport.setPriority(Objects.isNull(issue.getPriority().getId()) ? "" : BugLevelEnum.getLevelValueByKey(Long.valueOf(issue.getPriority().getId())));
-                oneReport.setExecutionVersion(oneExecution.getExecutionVersion());
-                List<EhrUserDetail> userList = matrixService.getEhrUserDetailLikeUserName(oneExecution.getExecutionUser());
-                oneReport.setExecutorName(CollectionUtils.isNotEmpty(userList) ? userList.get(0).getName() : "");
-                Object obj = issue.getField("customfield_10508");
-                oneReport.setBugEndType(Objects.isNull(obj) ? "" : JSON.parseObject(obj.toString()).getString("id"));
-                oneReport.setBugEndTypeStr(Objects.isNull(obj) ? "" : JSON.parseObject(obj.toString()).getString("value"));
+//                Issue issue = JiraUtils.getJiraIssueByIssueKey(issueKey);
+//                String summary = issue.getSummary();
+//                oneReport.setIssueKey(issueKey);
+//                oneReport.setDescription(summary);
+//                // 放入bug状态信息
+//                oneReport.setBugStatus(Objects.isNull(issue.getStatus().getId()) ? "" : BugStatusEnum.getStatusValueByKey(Long.valueOf(issue.getStatus().getId())));
+//                // 放入bug优先级信息
+//                oneReport.setPriority(Objects.isNull(issue.getPriority().getId()) ? "" : BugLevelEnum.getLevelValueByKey(Long.valueOf(issue.getPriority().getId())));
+//                oneReport.setExecutionVersion(oneExecution.getExecutionVersion());
+//                List<EhrUserDetail> userList = matrixService.getEhrUserDetailLikeUserName(oneExecution.getExecutionUser());
+//                oneReport.setExecutorName(CollectionUtils.isNotEmpty(userList) ? userList.get(0).getName() : "");
+//                Object obj = issue.getField("customfield_10508");
+//                oneReport.setBugEndType(Objects.isNull(obj) ? "" : JSON.parseObject(obj.toString()).getString("id"));
+//                oneReport.setBugEndTypeStr(Objects.isNull(obj) ? "" : JSON.parseObject(obj.toString()).getString("value"));
             } catch (Exception e) {
                 oneReport.setDescription("获取jira bug信息错误，请检查 jira issue key");
                 log.error("失败的 issueKey 是：{}", issueKey);
@@ -558,12 +555,12 @@ public class TestTaskServiceImpl extends ServiceImpl<TestTaskMapper, TestTask> i
             //判断是p1p2级别bug才会给bug数+1
             testExecutionList.stream().forEach(te -> {
                 try {
-                    Issue issue = JiraUtils.getJiraIssueByIssueKey(te.getRelationBug());
-                    if (Objects.nonNull(issue)) {
-                        if (Long.valueOf(issue.getPriority().getId()) < BugLevelEnum.P2.getLevelId()) {
-                            p1p2bugCount.getAndIncrement();
-                        }
-                    }
+//                    Issue issue = JiraUtils.getJiraIssueByIssueKey(te.getRelationBug());
+//                    if (Objects.nonNull(issue)) {
+//                        if (Long.valueOf(issue.getPriority().getId()) < BugLevelEnum.P2.getLevelId()) {
+//                            p1p2bugCount.getAndIncrement();
+//                        }
+//                    }
                 } catch (Exception e) {
                     log.error("获取jira缺陷信息失败", e);
                 }

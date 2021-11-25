@@ -1,7 +1,10 @@
 package com.ziroom.qa.quality.defende.provider.config.interceptor;
 
 import com.ziroom.qa.quality.defende.provider.entity.User;
+import com.ziroom.qa.quality.defende.provider.result.CustomException;
+import com.ziroom.qa.quality.defende.provider.result.CustomExceptionTypeEnum;
 import com.ziroom.qa.quality.defende.provider.service.UserService;
+import com.ziroom.qa.quality.defende.provider.vo.user.UserVo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,20 +30,26 @@ public class LoginInterceptor implements HandlerInterceptor {
         log.info("拦截器开始 ------------------------------------------------------ ");
         //1. 获取请求参数
         String userName = request.getHeader("userName");
-//        String userToken = request.getHeader("userToken");
-//        if (StringUtils.isBlank(userName) || StringUtils.isBlank(userToken)) {
-//            return false;
-//        }
-//        UserVo userVo = userService.getByToken(userToken);
-//        if (Objects.isNull(userVo)) {
-//            log.info("用户token失效！");
-//            return false;
-//        }
-        User user = userService.getUserInfoByUserName(userName);
-        if (Objects.isNull(user)) {
-            log.info("{}，该用户不存在！！！", userName);
+        String userToken = request.getHeader("userToken");
+        if (StringUtils.isBlank(userName) || StringUtils.isBlank(userToken)) {
             return false;
         }
+        UserVo userVo = userService.getByToken(userToken);
+        if (Objects.isNull(userVo)) {
+            log.info("用户token失效！");
+            throw new CustomException("用户token失效!");
+        }
+        User user = userService.getUserInfoByUserName(userName);
+
+        if (Objects.isNull(user)) {
+            log.info("{}，该用户不存在！！！", userName);
+            throw new CustomException("该用户不存在");
+        }
+
+        if (!user.getUserName().equals(userVo.getUserName())) {
+            throw new CustomException(CustomExceptionTypeEnum.USERNAME_NOMATCH);
+        }
+
         return true;
     }
 

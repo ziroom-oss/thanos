@@ -77,7 +77,7 @@ public class TestTopicController {
         return restResultVo;
     }
 
-    @OperateLogAnnotation(moduleName = OperateLogModuleConstants.TOPIC, option = OperateLogTypeConstants.SAVE)
+//    @OperateLogAnnotation(moduleName = OperateLogModuleConstants.TOPIC, option = OperateLogTypeConstants.SAVE)
     @ApiOperation("新增信息")
     @PostMapping("/saveTestTopic")
     public RestResultVo saveTestTopic(@RequestHeader String userName, @RequestBody TestTopic testTopic){
@@ -100,7 +100,7 @@ public class TestTopicController {
         return restResultVo;
     }
 
-    @OperateLogAnnotation(moduleName = OperateLogModuleConstants.TOPIC, option = OperateLogTypeConstants.UPDATE)
+//    @OperateLogAnnotation(moduleName = OperateLogModuleConstants.TOPIC, option = OperateLogTypeConstants.UPDATE)
     @ApiOperation("修改信息")
     @PostMapping("/updateTestTopic")
     public RestResultVo updateTestTopic(@RequestHeader String userName, @RequestBody TestTopic testTopic){
@@ -121,7 +121,7 @@ public class TestTopicController {
         return restResultVo;
     }
 
-    @OperateLogAnnotation(moduleName = OperateLogModuleConstants.TOPIC, option = OperateLogTypeConstants.DETAIL)
+//    @OperateLogAnnotation(moduleName = OperateLogModuleConstants.TOPIC, option = OperateLogTypeConstants.DETAIL)
     @ApiOperation("根据id获取详情")
     @GetMapping("/findInfoById")
     public RestResultVo findInfoById(@RequestHeader String userName, @RequestParam Long id){
@@ -150,7 +150,7 @@ public class TestTopicController {
         return restResultVo;
     }
 
-    @OperateLogAnnotation(moduleName = OperateLogModuleConstants.TOPIC, option = OperateLogTypeConstants.DETELE)
+//    @OperateLogAnnotation(moduleName = OperateLogModuleConstants.TOPIC, option = OperateLogTypeConstants.DETELE)
     @ApiOperation("批量删除")
     @GetMapping("/batchDeleteByIdList")
     public RestResultVo batchDeleteByIdList(@RequestHeader String userName, @RequestParam List<Long> idList){

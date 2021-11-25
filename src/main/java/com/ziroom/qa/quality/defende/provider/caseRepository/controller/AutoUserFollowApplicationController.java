@@ -5,7 +5,6 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.ziroom.qa.quality.defende.provider.caseRepository.entity.AutoUserFollowApplication;
 import com.ziroom.qa.quality.defende.provider.caseRepository.entity.dto.AutoUserFollowApplicationDto;
 import com.ziroom.qa.quality.defende.provider.caseRepository.service.IAutoUserFollowApplicationService;
-import com.ziroom.qa.quality.defende.provider.outinterface.client.omega.OmegeApplicationLevel;
 import com.ziroom.qa.quality.defende.provider.result.RestResultVo;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -62,7 +61,7 @@ public class AutoUserFollowApplicationController {
     @ApiOperation("参与的应用，包含接口")
     @RequestMapping("/myJoinApplication")
     public RestResultVo myJoinApplication(@RequestHeader("userName") String userName, @RequestHeader("uid") String uid) {
-        List<OmegeApplicationLevel> list = new ArrayList<>();
+        List list = new ArrayList<>();
 //        RestResultVo<List<ResourceVo>> listRestResult = merakApiClient.listApp(uid);
 ////        设置是否收藏
 //        QueryWrapper<AutoUserFollowApplication> queryWrapper = new QueryWrapper<>();

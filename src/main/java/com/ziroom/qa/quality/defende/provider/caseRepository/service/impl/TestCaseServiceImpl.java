@@ -24,7 +24,6 @@ import com.ziroom.qa.quality.defende.provider.service.TestApplicationModuleServi
 import com.ziroom.qa.quality.defende.provider.service.TestApplicationService;
 import com.ziroom.qa.quality.defende.provider.service.UserService;
 import com.ziroom.qa.quality.defende.provider.util.DicUtil;
-import com.ziroom.qa.quality.defende.provider.util.JiraUtils;
 import com.ziroom.qa.quality.defende.provider.util.TimeUtil;
 import com.ziroom.qa.quality.defende.provider.util.XmindUtil;
 import com.ziroom.qa.quality.defende.provider.util.xmind.pojo.Attached;
@@ -843,12 +842,12 @@ public class TestCaseServiceImpl extends ServiceImpl<TestCaseMapper, TestCase> i
                 //1.3. 验证测试用例必填字段唯一
 //                restResult = this.validateTestCaseRequiredField(testCase,restResult);
                 //1.4. 验证测试用例jiraid是否正确
-                TestResultVo jiraResult = JiraUtils.validateJiraInfo(testCase.getRelationRequirement());
-                if (jiraResult.getFlag()) {
-                    testCase.setRelationRequirement(jiraResult.getData().toString());
-                } else {
-                    restResultVo = RestResultVo.fromErrorMessage(jiraResult.getMsgRes());
-                }
+//                TestResultVo jiraResult = JiraUtils.validateJiraInfo(testCase.getRelationRequirement());
+//                if (jiraResult.getFlag()) {
+//                    testCase.setRelationRequirement(jiraResult.getData().toString());
+//                } else {
+//                    restResultVo = RestResultVo.fromErrorMessage(jiraResult.getMsgRes());
+//                }
                 //2. 格式化测试用例
                 if (restResultVo.isSuccess()) {
                     if (!testCase.isPeopSaveFlag()) {

@@ -1,5 +1,6 @@
 package com.ziroom.qa.quality.defende.provider.service.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ziroom.qa.quality.defende.provider.constant.enums.UserRoleEnum;
@@ -92,8 +93,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         newUser.setUserName(user.getUserName());
         newUser.setUserType(2);
         newUser.setRole(UserRoleEnum.ROLE_USER.getName());
-        newUser.setTreePath(user.getTreePath());
-        newUser.setEhrGroup("");
+        newUser.setTreePath("100011,100111,101111,111111");
+        newUser.setEhrGroup("xx管理部");
         newUser.setPassword(MD5Util.MD5Encode(user.getPassword()));
         newUser.setUid(IdGenUtil.nextId() + "");
         newUser.setCreateTime(LocalDateTime.now());
@@ -124,8 +125,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         }
 
         String oldToken = (String) redisUtil.get(user.getUserName());
-        redisUtil.deleteByKey(oldToken);
-
+        if (StringUtils.isNotBlank(oldToken)) {
+            redisUtil.deleteByKey(oldToken);
+        }
         String token = UUID.randomUUID().toString().replace("-", "");
         log.info("login userName === {},token === {}", user.getUserName(), token);
         BeanUtils.copyProperties(userList.get(0), user);
@@ -177,7 +179,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         if (StringUtils.isBlank(userToken)) {
             return null;
         }
-        return (UserVo) redisUtil.get(userToken);
+        Object obj = redisUtil.get(userToken);
+        if (Objects.isNull(obj)) {
+            return null;
+        }
+        return JSONObject.parseObject(obj.toString(), UserVo.class);
     }
 
     /**

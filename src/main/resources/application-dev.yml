@@ -15,9 +15,9 @@ spring:
     port: 6384
     timeout: 2000
   mail:
-    host: smtp.ziroom.com
-    username: bjzr-tech-qa-cr@ziroom.com
-    password: Nryh1234.
+    host: smtp.xxx.xxx
+    username: xxxx@xxx.xxx
+    password: xxxxxx
     port: 25
     default-encoding: UTF-8
     properties:
@@ -36,15 +36,9 @@ jira:
 
 ziroom:
   ehr:
-    rediskey: bi-ehrDeptTree-Qa
-    defendeRediskey: quality-defende-InternetPlatEhrUserList
+    defendeRediskey: myRedisKey
 
 quality:
   baseurl: http://localhost:8080/
   testTaskUrl: http://localhost:8080/caseExecutionDetailAndList?type=add
-# RocketMQ 相关
-aims:
-  id: AIMS_EVENTS
-  consumerGroup: godzilla
-  rocket:
-    nameserver-addr: 10.16.34.232:9876
+

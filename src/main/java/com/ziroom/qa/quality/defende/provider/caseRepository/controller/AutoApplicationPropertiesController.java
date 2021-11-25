@@ -6,7 +6,6 @@ import com.ziroom.qa.quality.defende.provider.caseRepository.entity.AutoApplicat
 import com.ziroom.qa.quality.defende.provider.caseRepository.entity.dto.AutoApplicationPropertiesDto;
 import com.ziroom.qa.quality.defende.provider.caseRepository.entity.vo.AutoApplicationPropertiesVo;
 import com.ziroom.qa.quality.defende.provider.caseRepository.service.IAutoApplicationPropertiesService;
-import com.ziroom.qa.quality.defende.provider.outinterface.client.omega.OmegeApplicationLevel;
 import com.ziroom.qa.quality.defende.provider.result.CustomException;
 import com.ziroom.qa.quality.defende.provider.result.RestResultVo;
 import io.swagger.annotations.ApiOperation;
@@ -72,7 +71,7 @@ public class AutoApplicationPropertiesController {
     @ApiOperation("参与的应用,不含接口")
     @RequestMapping("/myJoinApplicationSimple")
     public RestResultVo myJoinApplicationSimple(@RequestHeader("uid") String uid) {
-        List<OmegeApplicationLevel> list = new ArrayList<>();
+        List list = new ArrayList<>();
 //        RestResultVo<List<ResourceVo>> listRestResult = merakApiClient.listApp(uid);
 //        listRestResult.getData().stream().forEach(vo ->{
 //            OmegeApplicationLevel omegaProject =new OmegeApplicationLevel();

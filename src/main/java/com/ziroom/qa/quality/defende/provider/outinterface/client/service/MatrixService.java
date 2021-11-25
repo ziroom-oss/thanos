@@ -28,7 +28,7 @@ public class MatrixService {
     @Autowired
     private RedisUtil redisUtil;
     @Value("${ziroom.ehr.defendeRediskey}")
-    private String redisKey = "quality-defende-InternetPlatEhrUserList";
+    private String redisKey;
 
     private static final long redisTimeOutHours = 12;
 

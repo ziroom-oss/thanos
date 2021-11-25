@@ -118,7 +118,6 @@ public class TestCaseController {
         return RestResultVo.fromData(testCaseList);
     }
 
-    @OperateLogAnnotation(moduleName = OperateLogModuleConstants.TESTCASE, option = OperateLogTypeConstants.DETAIL)
     @ApiOperation("传值选中的测试用例")
     @PostMapping("/getCheckedTestCaseList")
     public RestResultVo<List<TestCase>> getCheckedTestCaseList(@RequestBody List<Long> testCaseIdList) {
@@ -133,7 +132,6 @@ public class TestCaseController {
     }
 
 
-    @OperateLogAnnotation(moduleName = OperateLogModuleConstants.TESTCASE, option = OperateLogTypeConstants.APPROVED)
     @ApiOperation("批量审批测试用例")
     @PostMapping(value = "/batchApprovedTestCase", produces = {"application/json;charset=UTF-8"})
     public RestResultVo<String> batchApprovedTestCase(@RequestBody TestCaseVo testCaseVo,
@@ -176,7 +174,6 @@ public class TestCaseController {
     }
 
 
-    @OperateLogAnnotation(moduleName = OperateLogModuleConstants.TESTCASE, option = OperateLogTypeConstants.SAVE)
     @ApiOperation("保存测试用例")
     @PostMapping(value = "/saveTestCase", produces = {"application/json;charset=UTF-8"})
     public RestResultVo saveTestCase(@RequestBody TestCase testCase, HttpServletRequest request) {
@@ -199,7 +196,6 @@ public class TestCaseController {
         }
     }
 
-    @OperateLogAnnotation(moduleName = OperateLogModuleConstants.TESTCASE, option = OperateLogTypeConstants.UPDATE)
     @ApiOperation("更新测试用例")
     @PostMapping(value = "/updateTestCase", produces = {"application/json;charset=UTF-8"})
     public RestResultVo updateTestCase(@RequestBody TestCase testCase, HttpServletRequest request) {
@@ -217,8 +213,6 @@ public class TestCaseController {
         }
     }
 
-
-    //    @OperateLogAnnotation(moduleName = OperateLogModuleConstants.TESTCASE, option = OperateLogTypeConstants.UPLOAD_EXCEL_DATA)
     @ApiOperation("上传Excel测试用例模板")
     @PostMapping(value = "/uploadTestCase")
     public RestResultVo uploadTestCase(@RequestParam("file") MultipartFile file,
@@ -256,7 +250,6 @@ public class TestCaseController {
         return restResultVo;
     }
 
-    @OperateLogAnnotation(moduleName = OperateLogModuleConstants.TESTCASE, option = OperateLogTypeConstants.DOWNLOAD_EXCEL_TEMPLATE)
     @ApiOperation("导出Excel测试用例模板")
     @PostMapping(value = "/exportTestCaseExcelTemplate", produces = {"application/json;charset=UTF-8"})
     public void exportTestCaseExcelTemplate(@RequestParam(value = "idList", required = false) List<Long> idList, HttpServletResponse response) throws IOException {
@@ -272,7 +265,6 @@ public class TestCaseController {
         }
     }
 
-    @OperateLogAnnotation(moduleName = OperateLogModuleConstants.TESTCASE, option = OperateLogTypeConstants.DETELE)
     @ApiOperation("批量删除测试用例")
     @GetMapping(value = "/batchDeleteTestCase", produces = {"application/json;charset=UTF-8"})
     public RestResultVo<String> batchDeleteTestCase(@RequestParam List<Long> idList, HttpServletRequest request) {
@@ -300,7 +292,6 @@ public class TestCaseController {
     }
 
 
-    @OperateLogAnnotation(moduleName = OperateLogModuleConstants.TESTCASE, option = OperateLogTypeConstants.DOWNLOAD_XMIND_TEMPLATE)
     @ApiOperation("导出XMIND测试用例")
     @GetMapping(value = "/exportTestCaseXmindTemplate", produces = {"application/json;charset=UTF-8"})
     public void exportTestCaseXmindTemplate(@RequestParam(value = "idList", required = false) List<Long> idList, HttpServletResponse response) throws IOException {
@@ -314,14 +305,6 @@ public class TestCaseController {
             response.addHeader("Cache-Control", "no-cache");
             testCaseService.exportTestCaseXmind(idList, response, fileName);
         } catch (Exception e) {
-            //2. 处理异常
-//            response.reset();
-//            response.setContentType("application/json");
-//            response.setCharacterEncoding("utf-8");
-//            Map<String, String> map = new HashMap<String, String>();
-//            map.put("status", "failure");
-//            map.put("message", "下载文件失败" + e.getMessage());
-//            response.getWriter().println(JSON.toJSONString(map));
             log.error("导出XMIND测试用例 idList=={},失败原因:", JSON.toJSONString(idList), e);
         }
     }

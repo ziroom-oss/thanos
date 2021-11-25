@@ -6,11 +6,6 @@ spring:
     active: dev
   application:
     name: thanos
-#  cloud:
-#    config:
-#      discovery:
-#        enabled: true
-#        service-id: thanos
   servlet:
     multipart:
       max-file-size: 500MB
@@ -25,8 +20,6 @@ mybatis-plus:
   global-config:
     db-config:
       id-type: auto
-#  configuration:
-#    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 
 ribbon:
   ReadTimeout: 5000

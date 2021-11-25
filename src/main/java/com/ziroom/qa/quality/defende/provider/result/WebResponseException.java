@@ -20,7 +20,7 @@ public class WebResponseException extends WebAbstractResponseAdapter {
             return RestResultVo.fromErrorMessage(e.getMessage(),CustomExceptionTypeEnum.PARAM_ERROR.getCode());
         }
         log.error("统一异常拦截", e);
-        return RestResultVo.fromErrorMessage(CustomExceptionTypeEnum.OTHER_ERROR.getDesc(), CustomExceptionTypeEnum.OTHER_ERROR.getCode());
+        return RestResultVo.fromErrorMessage(e.getMessage(), CustomExceptionTypeEnum.OTHER_ERROR.getCode());
     }
 
 }
