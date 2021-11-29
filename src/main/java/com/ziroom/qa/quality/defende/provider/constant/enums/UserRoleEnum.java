@@ -10,9 +10,9 @@ public enum UserRoleEnum {
     /**
      * 测试执行任务类型
      */
-    ROLE_USER("user","普通用户"),
-    ROLE_ADMIN("admin","管理员"),
-    ROLE_SUPER_ADMIN("superAdmin","超级管理员");
+    ROLE_USER("user", "普通用户"),
+    ROLE_ADMIN("admin", "管理员"),
+    ROLE_SUPER_ADMIN("superAdmin", "超级管理员");
 
 
     private String name;
@@ -22,9 +22,10 @@ public enum UserRoleEnum {
 
     static {
         for (UserRoleEnum item : UserRoleEnum.values()) {
-            MAP.put(item.name,item);
+            MAP.put(item.name, item);
         }
     }
+
     UserRoleEnum(String name, String chineseName) {
         this.name = name;
         this.chineseName = chineseName;
@@ -35,7 +36,7 @@ public enum UserRoleEnum {
         return name;
     }
 
-    public static List<String> getUserRoleList(){
+    public static List<String> getUserRoleList() {
         return new ArrayList<>(MAP.keySet());
     }
 
@@ -43,11 +44,4 @@ public enum UserRoleEnum {
         return chineseName;
     }
 
-    @Override
-    public String toString() {
-        return "UserRoleEnum{" +
-                "name='" + name + '\'' +
-                ", chineseName='" + chineseName + '\'' +
-                '}';
-    }
 }

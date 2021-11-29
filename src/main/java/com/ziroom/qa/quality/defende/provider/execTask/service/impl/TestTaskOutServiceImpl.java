@@ -4,7 +4,10 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.ziroom.qa.quality.defende.provider.constant.TestCenterConstants;
-import com.ziroom.qa.quality.defende.provider.constant.enums.*;
+import com.ziroom.qa.quality.defende.provider.constant.enums.TestExecutionTypeEnum;
+import com.ziroom.qa.quality.defende.provider.constant.enums.TestTaskCaseStatusEnum;
+import com.ziroom.qa.quality.defende.provider.constant.enums.TestTaskStatusEnum;
+import com.ziroom.qa.quality.defende.provider.constant.enums.TestTaskTypeEnum;
 import com.ziroom.qa.quality.defende.provider.execTask.entity.TaskTestCase;
 import com.ziroom.qa.quality.defende.provider.execTask.entity.TestExecution;
 import com.ziroom.qa.quality.defende.provider.execTask.entity.TestTask;
@@ -327,22 +330,18 @@ public class TestTaskOutServiceImpl implements TestTaskOutService {
         String issueKey = result.getJSONObject("issue").get("key").toString();
         // 获取项目测试负责人
         String projectKey = issueKey.split("-")[0];
-        String testLeader = JiraProjectTestLeaderEnum.getTestUserByProjectKey(projectKey);
-        if (StringUtils.isBlank(testLeader)) {
-            testLeader = assignee;
-        }
         List<TestTask> testTaskList = testTaskService.findByIssueKey(issueKey);
         if (CollectionUtils.isNotEmpty(testTaskList)) {
             log.info("该jira任务已经存在，jiraid==={}", issueKey);
             return;
         }
         // 创建测试执行
-        TestTask testTask = this.saveRequestInfo4Jira(testLeader, issueKey, summary);
+        TestTask testTask = this.saveRequestInfo4Jira(assignee, issueKey, summary);
         // 创建发送消息给对应的测试主管
         String url = testTaskUrl + "&testExecutionType=1&taskId=" + testTask.getId();
         String jiraUrl = "xxxx.xxx.xxx/" + "brower/" + issueKey;
         try {
-            sendMailService.sendJiraTestTaskMail(testLeader, url, jiraUrl, summary);
+            sendMailService.sendJiraTestTaskMail(assignee, url, jiraUrl, summary);
         } catch (MessagingException e) {
             log.error("创建jira任务同步生成测试执行信息失败，但是不影响使用！", e);
         }
