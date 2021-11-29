@@ -31,7 +31,6 @@ import com.ziroom.qa.quality.defende.provider.vo.outvo.OutResVo;
 import com.ziroom.qa.quality.defende.provider.vo.outvo.SendTaskMsgVo;
 import com.ziroom.qa.quality.defende.provider.vo.statistics.TaskTopVo;
 import lombok.extern.slf4j.Slf4j;
-import net.rcarz.jiraclient.Issue;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -530,7 +529,6 @@ public class TestTaskOutServiceImpl implements TestTaskOutService {
             return;
         }
         String jiraUrl = "xxxx.xxx.xxx/" + "brower/" + outReqVo.getJiraId();
-        Issue issue;
         String jiraDesc = "jira描述信息";
 //        try {
 //            issue = JiraUtils.getJiraIssueByIssueKey(outReqVo.getJiraId());
