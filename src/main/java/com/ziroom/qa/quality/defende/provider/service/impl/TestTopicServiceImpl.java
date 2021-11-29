@@ -11,9 +11,11 @@ import com.ziroom.qa.quality.defende.provider.entity.TopicTaskRel;
 import com.ziroom.qa.quality.defende.provider.mapper.TestTopicMapper;
 import com.ziroom.qa.quality.defende.provider.outinterface.client.service.EhrService;
 import com.ziroom.qa.quality.defende.provider.outinterface.client.service.MatrixService;
-import com.ziroom.qa.quality.defende.provider.service.*;
+import com.ziroom.qa.quality.defende.provider.service.DailyTestReportService;
+import com.ziroom.qa.quality.defende.provider.service.TestTopicService;
+import com.ziroom.qa.quality.defende.provider.service.TopicRiskRelService;
+import com.ziroom.qa.quality.defende.provider.service.TopicTaskRelService;
 import com.ziroom.qa.quality.defende.provider.util.DicUtil;
-import com.ziroom.qa.quality.defende.provider.util.JiraUtils;
 import com.ziroom.qa.quality.defende.provider.vo.MatrixUserDetail;
 import com.ziroom.qa.quality.defende.provider.vo.Pagination;
 import com.ziroom.qa.quality.defende.provider.vo.TestResultVo;
@@ -62,11 +64,10 @@ public class TestTopicServiceImpl extends ServiceImpl<TestTopicMapper, TestTopic
             return checkVo;
         }
         // 3. 校验jiraid
-        TestResultVo jiraRes = JiraUtils.validateJiraInfo(testTopic.getRelationRequirement());
-        if (!jiraRes.getFlag()) {
-            return jiraRes;
-        }
-        testTopic.setRelationRequirement(jiraRes.getData().toString());
+//        TestResultVo jiraRes = JiraUtils.validateJiraInfo(testTopic.getRelationRequirement());
+//        if (!jiraRes.getFlag()) {
+//            return jiraRes;
+//        }
         // 4. 对名称去除空格进行保存操作
         testTopic.setTopicName(testTopic.getTopicName().trim());
         boolean resFlag = this.save(testTopic);
@@ -136,11 +137,11 @@ public class TestTopicServiceImpl extends ServiceImpl<TestTopicMapper, TestTopic
             return checkVo;
         }
         // 3. 校验jiraid
-        TestResultVo jiraRes = JiraUtils.validateJiraInfo(testTopic.getRelationRequirement());
-        if (!jiraRes.getFlag()) {
-            return jiraRes;
-        }
-        testTopic.setRelationRequirement(jiraRes.getData().toString());
+//        TestResultVo jiraRes = JiraUtils.validateJiraInfo(testTopic.getRelationRequirement());
+//        if (!jiraRes.getFlag()) {
+//            return jiraRes;
+//        }
+//        testTopic.setRelationRequirement(jiraRes.getData().toString());
         // 4. 对名称去除空格进行保存操作
         testTopic.setTopicName(testTopic.getTopicName().trim());
         boolean resFlag = this.updateById(testTopic);

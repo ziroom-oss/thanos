@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:p6spy:mysql://10.30.7.152:3306/qu_thanos?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false
-    username: dev_owner
-    password: ziroomdb
+    url: jdbc:p6spy:mysql://1.1.1.1:3306/qu_thanos?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false
+    username: xxxx
+    password: xxxx
     type: com.zaxxer.hikari.HikariDataSource
     driver-class-name: com.p6spy.engine.spy.P6SpyDriver
     initialization-mode: embedded
@@ -11,13 +11,13 @@ spring:
       minIdle: 5
       maxActive: 10
   redis:
-    host: 10.216.4.116
-    port: 6384
+    host: 1.1.1.1
+    port: 1111
     timeout: 2000
   mail:
-    host: smtp.ziroom.com
-    username: bjzr-tech-qa-cr@ziroom.com
-    password: Nryh1234.
+    host: smtp.xxx.xxx
+    username: xxxx@xxx.xxx
+    password: xxxxxx
     port: 25
     default-encoding: UTF-8
     properties:
@@ -27,52 +27,17 @@ spring:
         #表示开启 DEBUG 模式，这样，邮件发送过程的日志会在控制台打印出来，方便排查错误
         debug: true
 
-matrix:
-  baseurl: http://api-qabi-web.kt.ziroom.com/
-
-
 jiraIssue:
-  validateFlag: true
+  validateFlag: false
 jira:
   baseurl: http://jira.xxxx.com/
   username: admin
   password: admin123
 
-gitlab:
-  ip: gitlab.ziroom.com
-  token: MsFHqYJz7zWjKryzFYF2
-  httpType: https
-# 矩阵最新的ehr rediskey
 ziroom:
   ehr:
-    rediskey: bi-ehrDeptTree-Qa
-    defendeRediskey: quality-defende-InternetPlatEhrUserList
-
-
-
-
-ehr:
-  baseurl: http://ehrnew.t.ziroom.com/
+    defendeRediskey: myRedisKey
 
 quality:
   baseurl: http://localhost:8080/
   testTaskUrl: http://localhost:8080/caseExecutionDetailAndList?type=add
-wechat:
-  token: 60ab568d659edf76b4a94bfd
-  templateId: WW-1621930419
-  #  url: http://message.t.ziroom.com
-  url: http://message-api-new.kt.ziroom.com
-  robotKey: 1efc88af-9f03-4b2c-9fb6-0a256c82a60e
-omega:
-  baseurl: http://omega-api.kp.ziroom.com/
-#方舟平台地址
-ark:
-  baseurl: http://fangzhou.kt.ziroom.com/
-merak:
-  url: http://merak.kt.ziroom.com
-# RocketMQ 相关
-aims:
-  id: AIMS_EVENTS
-  consumerGroup: godzilla
-  rocket:
-    nameserver-addr: 10.16.34.232:9876

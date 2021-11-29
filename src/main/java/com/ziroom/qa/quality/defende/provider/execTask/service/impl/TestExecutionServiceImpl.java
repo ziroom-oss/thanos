@@ -1,14 +1,12 @@
 package com.ziroom.qa.quality.defende.provider.execTask.service.impl;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ziroom.qa.quality.defende.provider.caseRepository.entity.TestCase;
 import com.ziroom.qa.quality.defende.provider.caseRepository.service.TestCaseService;
 import com.ziroom.qa.quality.defende.provider.constant.QualityDefendeConstants;
-import com.ziroom.qa.quality.defende.provider.constant.TestCenterConstants;
 import com.ziroom.qa.quality.defende.provider.constant.enums.TestExecutionStatusEnum;
 import com.ziroom.qa.quality.defende.provider.constant.enums.TestExecutionTypeEnum;
 import com.ziroom.qa.quality.defende.provider.constant.enums.TestTaskCaseStatusEnum;
@@ -17,7 +15,6 @@ import com.ziroom.qa.quality.defende.provider.entity.User;
 import com.ziroom.qa.quality.defende.provider.execTask.entity.TaskTestCase;
 import com.ziroom.qa.quality.defende.provider.execTask.entity.TestExecution;
 import com.ziroom.qa.quality.defende.provider.execTask.entity.TestTask;
-import com.ziroom.qa.quality.defende.provider.execTask.entity.dto.JiraGroupDTO;
 import com.ziroom.qa.quality.defende.provider.execTask.entity.dto.RunCaseByIdListDto;
 import com.ziroom.qa.quality.defende.provider.execTask.entity.vo.AutoExecutionRecordVo;
 import com.ziroom.qa.quality.defende.provider.execTask.entity.vo.DemandVO;
@@ -26,22 +23,16 @@ import com.ziroom.qa.quality.defende.provider.execTask.service.IAutoTestCaseExec
 import com.ziroom.qa.quality.defende.provider.execTask.service.TaskTestCaseService;
 import com.ziroom.qa.quality.defende.provider.execTask.service.TestExecutionService;
 import com.ziroom.qa.quality.defende.provider.execTask.service.TestTaskService;
-import com.ziroom.qa.quality.defende.provider.outinterface.client.JiraApiClient;
 import com.ziroom.qa.quality.defende.provider.result.CustomException;
 import com.ziroom.qa.quality.defende.provider.result.RestResultVo;
 import com.ziroom.qa.quality.defende.provider.service.UserService;
 import com.ziroom.qa.quality.defende.provider.util.DicUtil;
-import com.ziroom.qa.quality.defende.provider.util.JiraUtils;
-import com.ziroom.qa.quality.defende.provider.util.TimeUtil;
 import com.ziroom.qa.quality.defende.provider.vo.BatchExecuteVo;
 import com.ziroom.qa.quality.defende.provider.vo.ExecutionSummaryVo;
 import com.ziroom.qa.quality.defende.provider.vo.SingleExecuteVo;
-import com.ziroom.qa.quality.defende.provider.vo.jira.JiraIssue;
 import lombok.extern.slf4j.Slf4j;
 import net.rcarz.jiraclient.Issue;
-import net.rcarz.jiraclient.JiraException;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,7 +40,10 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -70,8 +64,6 @@ public class TestExecutionServiceImpl extends ServiceImpl<TestExecutionMapper, T
     @Autowired
     @Lazy
     private IAutoTestCaseExecuteService autoTestCaseExecuteService;
-    @Autowired
-    private JiraApiClient jiraApiClient;
 
     public void autoExetionTask(long executionTaskId, String userName, List<AutoExecutionRecordVo> autoRecordList) {
         if (CollectionUtils.isEmpty(autoRecordList)) {
@@ -184,20 +176,20 @@ public class TestExecutionServiceImpl extends ServiceImpl<TestExecutionMapper, T
     public DemandVO queryDemandInfo(Long taskId, String userName) {
         DemandVO demandVO = new DemandVO();
         // 获取 缺陷所属部门
-        JSONObject jsonObject = jiraApiClient.getJiraGroup(2000, null);
-        if (Objects.nonNull(jsonObject)) {
-            Integer groupCount = Integer.parseInt(jsonObject.get("total").toString());
-            if (groupCount > 0) {
-                List<JiraGroupDTO> groupList = jsonObject.getJSONArray("groups").toJavaList(JiraGroupDTO.class);
-                demandVO.setBugDeptList(groupList);
-            }
-        }
+//        JSONObject jsonObject = jiraApiClient.getJiraGroup(2000, null);
+//        if (Objects.nonNull(jsonObject)) {
+//            Integer groupCount = Integer.parseInt(jsonObject.get("total").toString());
+//            if (groupCount > 0) {
+//                List<JiraGroupDTO> groupList = jsonObject.getJSONArray("groups").toJavaList(JiraGroupDTO.class);
+//                demandVO.setBugDeptList(groupList);
+//            }
+//        }
         // 获取 缺陷模块
         TestTask testTask = testTaskService.getById(taskId);
-        List<String> moduleList = JiraUtils.getComponentsAllowedValues(testTask.getRelationRequirement().split("-")[0], "缺陷");
-        if (CollectionUtils.isNotEmpty(moduleList)) {
-            demandVO.setModuleList(moduleList);
-        }
+//        List<String> moduleList = JiraUtils.getComponentsAllowedValues(testTask.getRelationRequirement().split("-")[0], "缺陷");
+//        if (CollectionUtils.isNotEmpty(moduleList)) {
+//            demandVO.setModuleList(moduleList);
+//        }
 
         return demandVO;
     }
@@ -231,22 +223,22 @@ public class TestExecutionServiceImpl extends ServiceImpl<TestExecutionMapper, T
             throw new CustomException("该测试执行状态已经上线完成，不能修改！");
         }
         // 校验缺陷是否正确
-        Issue issue;
-        try {
-            issue = JiraUtils.getJiraIssueByIssueKey(singleExecute.getRelationBug());
-        } catch (Exception e) {
-            throw new CustomException("缺陷id不存在");
-        }
-        if (Objects.isNull(issue) || !TestCenterConstants.ISSUE_TYPE_BUG.equals(Long.parseLong(issue.getIssueType().getId()))) {
-            throw new CustomException("缺陷id不正确");
-        }
+//        Issue issue;
+//        try {
+//            issue = JiraUtils.getJiraIssueByIssueKey(singleExecute.getRelationBug());
+//        } catch (Exception e) {
+//            throw new CustomException("缺陷id不存在");
+//        }
+//        if (Objects.isNull(issue) || !TestCenterConstants.ISSUE_TYPE_BUG.equals(Long.parseLong(issue.getIssueType().getId()))) {
+//            throw new CustomException("缺陷id不正确");
+//        }
         // 人工测试用例
         if (TestExecutionTypeEnum.ARTIFICIAL.getKey().equals(task.getTestExecutionType())) {
-            this.exeTestCaseFail(singleExecute, userName, issue);
+            this.exeTestCaseFail(singleExecute, userName, null);
         }
         // 自动测试执行
         else {
-            this.exeTestCaseFailAuto(singleExecute, userName, issue);
+            this.exeTestCaseFailAuto(singleExecute, userName, null);
         }
 
 
@@ -286,13 +278,14 @@ public class TestExecutionServiceImpl extends ServiceImpl<TestExecutionMapper, T
 
         String relationRequirement = task.getRelationRequirement();
         ExecutionSummaryVo summaryVo = new ExecutionSummaryVo();
-        try {
-            Issue issue = JiraUtils.getJiraIssueByIssueKey(relationRequirement);
-            String summary = issue.getSummary();
-            summaryVo.setRequirementSummary(relationRequirement + " " + summary);
-        } catch (Exception e) {
-            summaryVo.setRequirementSummary(relationRequirement);
-        }
+//        try {
+//            Issue issue = JiraUtils.getJiraIssueByIssueKey(relationRequirement);
+//            String summary = issue.getSummary();
+//            summaryVo.setRequirementSummary(relationRequirement + " " + summary);
+//        } catch (Exception e) {
+//            summaryVo.setRequirementSummary(relationRequirement);
+//        }
+        summaryVo.setRequirementSummary(relationRequirement);
         summaryVo.setNotRunCount(task.getNotRunCount());
         summaryVo.setRunCount(task.getRunCount());
         summaryVo.setRunFailCount(task.getRunFailCount());
@@ -384,7 +377,7 @@ public class TestExecutionServiceImpl extends ServiceImpl<TestExecutionMapper, T
             testTask.setStatus(TestTaskStatusEnum.RUNNING.getTestsTaskStatus());
             // 跟jira互通，更改jira状态为测试中
             // 由于jira上的需求状态不尽相同，所以只能更改为测试中
-            this.changeJiraStatus(testTask.getRelationRequirement());
+//            this.changeJiraStatus(testTask.getRelationRequirement());
         } else {
             if (!TestTaskStatusEnum.NOT_STARTED.getTestsTaskStatus().equals(testTask.getStatus())
                     && !TestTaskStatusEnum.SUBMITED.getTestsTaskStatus().equals(testTask.getStatus())) {
@@ -721,10 +714,10 @@ public class TestExecutionServiceImpl extends ServiceImpl<TestExecutionMapper, T
         testExecution.setExecutionUser(userName);
         testExecution.setIsNew(1);
         testExecution.setRelationBug(singleExecute.getRelationBug());
-        // 加入缺陷状态id 具体的内容为枚举 by lh
-        testExecution.setBugStatusId(Long.valueOf(issue.getStatus().getId()));
-        // 加入缺陷级别id 具体的内容为枚举 by lh
-        testExecution.setBugLevelId(Long.valueOf(issue.getPriority().getId()));
+//        // 加入缺陷状态id 具体的内容为枚举 by lh
+//        testExecution.setBugStatusId(Long.valueOf(issue.getStatus().getId()));
+//        // 加入缺陷级别id 具体的内容为枚举 by lh
+//        testExecution.setBugLevelId(Long.valueOf(issue.getPriority().getId()));
         super.save(testExecution);
 
         // 更新 case 表状态
@@ -826,61 +819,62 @@ public class TestExecutionServiceImpl extends ServiceImpl<TestExecutionMapper, T
      * @return
      */
     private Issue createBugByDefende(TestTask testTask, String userName, SingleExecuteVo singleExecuteVo) {
-        //1.查询测试执行信息
-        if (Objects.isNull(testTask)) {
-            throw new CustomException("测试执行任务不存在！");
-        }
-        //2.查询需求的信息
-        Issue issue = JiraUtils.getJiraIssueByIssueKey(testTask.getRelationRequirement());
-        if (Objects.isNull(issue)) {
-            throw new CustomException("需求信息不存在！");
-        }
-        JiraIssue defect = new JiraIssue();
-        // bug所属需求池
-        defect.setProject(issue.getProject().getKey());
-        // 经办人
-        defect.setAssignee(singleExecuteVo.getBugUserStr());
-        // 报告人
-//        defect.setReporter(userName);
-        defect.setCustomfield_11292(userName);
-
-//----------------------------------------------------------------------------------------------------
-        // bug标题
-        defect.setSummary(singleExecuteVo.getBugSummaryStr());
-        // 描述
-        defect.setDescription(singleExecuteVo.getBugSummaryStr());
-        // bug修复日期
-        defect.setDuedate(StringUtils.isBlank(singleExecuteVo.getBugTimeStr()) ? TimeUtil.getDateTimeStrByDay(null, JiraUtils.DEFAULT_DUE_DAYS) : singleExecuteVo.getBugTimeStr());
-        // 优先级
-        defect.setPriority(singleExecuteVo.getBugLevelStr());
-        //设置bug所属部门
-        List<String> depts = Arrays.asList(singleExecuteVo.getBugDeptStr());
-        defect.setCustomfield_10212(depts);
-        //设置bug所属中心
-        List<String> centers = new ArrayList<>();
-        centers.add(singleExecuteVo.getBugCenterStr());
-        defect.setCustomfield_10222(centers);
-        //所属模块
-        List<String> components = new ArrayList<>();
-        components.add(singleExecuteVo.getBugModuleStr());
-        defect.setComponents(components);
-        //设置所属端
-        List<String> forms = new ArrayList<>();
-        forms.add(singleExecuteVo.getBugEndTypeStr());
-        defect.setCustomfield_10508(forms);
-        // 设置缺陷类型
-        List<String> types = new ArrayList<>();
-        types.add(singleExecuteVo.getBugTypeStr());
-        defect.setCustomfield_10113(types);
-
-//----------------------------------------------------------------------------------------------------
-
-        try {
-            return JiraUtils.createBugByDefectBuss(defect);
-        } catch (JiraException e) {
-            log.error("createBugByDefende创建bug信息失败：issue === {}", testTask.getRelationRequirement(), e);
-            throw new CustomException(e.getMessage());
-        }
+        throw new CustomException("暂时不支持提bug，需要自行对接bug平台！");
+//        //1.查询测试执行信息
+//        if (Objects.isNull(testTask)) {
+//            throw new CustomException("测试执行任务不存在！");
+//        }
+//        //2.查询需求的信息
+//        Issue issue = JiraUtils.getJiraIssueByIssueKey(testTask.getRelationRequirement());
+//        if (Objects.isNull(issue)) {
+//            throw new CustomException("需求信息不存在！");
+//        }
+//        JiraIssue defect = new JiraIssue();
+//        // bug所属需求池
+//        defect.setProject(issue.getProject().getKey());
+//        // 经办人
+//        defect.setAssignee(singleExecuteVo.getBugUserStr());
+//        // 报告人
+////        defect.setReporter(userName);
+//        defect.setCustomfield_11292(userName);
+//
+////----------------------------------------------------------------------------------------------------
+//        // bug标题
+//        defect.setSummary(singleExecuteVo.getBugSummaryStr());
+//        // 描述
+//        defect.setDescription(singleExecuteVo.getBugSummaryStr());
+//        // bug修复日期
+//        defect.setDuedate(StringUtils.isBlank(singleExecuteVo.getBugTimeStr()) ? TimeUtil.getDateTimeStrByDay(null, JiraUtils.DEFAULT_DUE_DAYS) : singleExecuteVo.getBugTimeStr());
+//        // 优先级
+//        defect.setPriority(singleExecuteVo.getBugLevelStr());
+//        //设置bug所属部门
+//        List<String> depts = Arrays.asList(singleExecuteVo.getBugDeptStr());
+//        defect.setCustomfield_10212(depts);
+//        //设置bug所属中心
+//        List<String> centers = new ArrayList<>();
+//        centers.add(singleExecuteVo.getBugCenterStr());
+//        defect.setCustomfield_10222(centers);
+//        //所属模块
+//        List<String> components = new ArrayList<>();
+//        components.add(singleExecuteVo.getBugModuleStr());
+//        defect.setComponents(components);
+//        //设置所属端
+//        List<String> forms = new ArrayList<>();
+//        forms.add(singleExecuteVo.getBugEndTypeStr());
+//        defect.setCustomfield_10508(forms);
+//        // 设置缺陷类型
+//        List<String> types = new ArrayList<>();
+//        types.add(singleExecuteVo.getBugTypeStr());
+//        defect.setCustomfield_10113(types);
+//
+////----------------------------------------------------------------------------------------------------
+//
+//        try {
+//            return JiraUtils.createBugByDefectBuss(defect);
+//        } catch (JiraException e) {
+//            log.error("createBugByDefende创建bug信息失败：issue === {}", testTask.getRelationRequirement(), e);
+//            throw new CustomException(e.getMessage());
+//        }
     }
 
     /**
@@ -888,25 +882,25 @@ public class TestExecutionServiceImpl extends ServiceImpl<TestExecutionMapper, T
      *
      * @param jiraId
      */
-    public void changeJiraStatus(String jiraId) {
-        Issue issue = JiraUtils.getJiraIssueByIssueKey(jiraId);
-        if (issue != null) {
-            try {
-                log.info("changeJiraStatus执行jiraId == {} ，状态 == {}", jiraId, issue.getStatus().getName());
-                if ("开发中".equals(issue.getStatus().getName())) {
-                    try {
-                        issue.transition().execute("提测");
-                        log.info("changeJiraStatus执行jiraId == {} ，提测", jiraId);
-                    } catch (JiraException e) {
-                        issue.transition().execute("开始测试");
-                        log.info("changeJiraStatus执行jiraId == {} ，开始测试", jiraId);
-                    }
-                }
-            } catch (JiraException e) {
-                log.error("changeJiraStatus执行jiraId == {} ，状态 == {}，任务失败！", jiraId, issue.getStatus().getName(), e);
-            }
-        }
-    }
+//    public void changeJiraStatus(String jiraId) {
+//        Issue issue = JiraUtils.getJiraIssueByIssueKey(jiraId);
+//        if (issue != null) {
+//            try {
+//                log.info("changeJiraStatus执行jiraId == {} ，状态 == {}", jiraId, issue.getStatus().getName());
+//                if ("开发中".equals(issue.getStatus().getName())) {
+//                    try {
+//                        issue.transition().execute("提测");
+//                        log.info("changeJiraStatus执行jiraId == {} ，提测", jiraId);
+//                    } catch (JiraException e) {
+//                        issue.transition().execute("开始测试");
+//                        log.info("changeJiraStatus执行jiraId == {} ，开始测试", jiraId);
+//                    }
+//                }
+//            } catch (JiraException e) {
+//                log.error("changeJiraStatus执行jiraId == {} ，状态 == {}，任务失败！", jiraId, issue.getStatus().getName(), e);
+//            }
+//        }
+//    }
 
     /**
      * 测试执行模板校验

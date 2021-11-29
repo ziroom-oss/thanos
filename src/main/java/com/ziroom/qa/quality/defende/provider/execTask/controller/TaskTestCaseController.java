@@ -3,9 +3,6 @@ package com.ziroom.qa.quality.defende.provider.execTask.controller;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ziroom.qa.quality.defende.provider.caseRepository.entity.TestCase;
 import com.ziroom.qa.quality.defende.provider.caseRepository.entity.dto.SingleApiCaseListDto;
-import com.ziroom.qa.quality.defende.provider.config.OperateLogAnnotation;
-import com.ziroom.qa.quality.defende.provider.constant.OperateLogModuleConstants;
-import com.ziroom.qa.quality.defende.provider.constant.OperateLogTypeConstants;
 import com.ziroom.qa.quality.defende.provider.execTask.entity.TaskTestCase;
 import com.ziroom.qa.quality.defende.provider.execTask.service.TaskTestCaseService;
 import com.ziroom.qa.quality.defende.provider.result.RestResultVo;
@@ -28,7 +25,6 @@ public class TaskTestCaseController {
     @Autowired
     private TaskTestCaseService taskTestCaseService;
 
-    @OperateLogAnnotation(moduleName = OperateLogModuleConstants.TASKTESTCASE, option = OperateLogTypeConstants.SAVEORUPDATE)
     @ApiOperation("测试执行批量关联测试用例")
     @PostMapping("/batchSaveOrUpdateTaskTestCase")
     public RestResultVo batchSaveOrUpdateTaskTestCase(@RequestHeader String userName, @RequestBody TaskTestCaseVo taskTestCaseVo) {
@@ -46,7 +42,6 @@ public class TaskTestCaseController {
         return RestResultVo.fromData(taskTestCaseService.getTaskTestCaseByTaskId(taskId));
     }
 
-    @OperateLogAnnotation(moduleName = OperateLogModuleConstants.TASKTESTCASE, option = OperateLogTypeConstants.DETELE)
     @ApiOperation("批量删除关联测试执行用例列表")
     @PostMapping("/batchDeleteTaskTestCase")
     public RestResultVo batchDeleteTaskTestCase(@RequestHeader String userName, @RequestBody TaskTestCaseVo taskTestCaseVo) {

@@ -38,17 +38,24 @@ public class LoginController {
         return RestResultVo.fromSuccess("登出成功");
     }
 
-    @ApiOperation("用户注销")
+    @ApiOperation("用户删除")
     @PostMapping(value = "/userDelete")
-    public RestResultVo userDelete(@RequestHeader String userToken) {
-        userService.userDelete(userToken);
-        return RestResultVo.fromSuccess("注销成功");
+    public RestResultVo userDelete(@RequestHeader String userToken, @RequestHeader String userName) {
+        userService.userDelete(userToken, userName);
+        return RestResultVo.fromSuccess("删除成功");
     }
 
     @ApiOperation("获取用户信息")
     @PostMapping(value = "/getByToken")
     public RestResultVo getByToken(@RequestHeader String userToken) {
         return RestResultVo.fromData(userService.getByToken(userToken));
+    }
+
+    @ApiOperation("用户修改密码")
+    @PostMapping(value = "/userUpdatePwd")
+    public RestResultVo userUpdatePwd(@RequestBody UserVo user) {
+        userService.userUpdatePwd(user);
+        return RestResultVo.fromSuccess("注册成功");
     }
 
 }

@@ -3,12 +3,7 @@ package com.ziroom.qa.quality.defende.provider.aop;
 import com.alibaba.fastjson.JSON;
 import com.ziroom.qa.quality.defende.provider.config.OperateLogAnnotation;
 import com.ziroom.qa.quality.defende.provider.entity.Monitoring;
-import com.ziroom.qa.quality.defende.provider.outinterface.client.service.EhrService;
-import com.ziroom.qa.quality.defende.provider.outinterface.client.service.MatrixService;
 import com.ziroom.qa.quality.defende.provider.service.MonitoringService;
-import com.ziroom.qa.quality.defende.provider.vo.EhrUserDetail;
-import com.ziroom.qa.quality.defende.provider.vo.OutsourcingPersonnelVo;
-import com.ziroom.qa.quality.defende.provider.result.RestResultVo;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.JoinPoint;
@@ -38,11 +33,7 @@ public class SysLogAspect {
     Logger logger = LoggerFactory.getLogger(SysLogAspect.class);
 
     @Autowired
-    private EhrService ehrService;
-    @Autowired
     private MonitoringService monitoringService;
-    @Autowired
-    private MatrixService matrixService;
 
     @ApiOperation("定义切点 @Pointcut | 在注解的位置切入代码")
     @Pointcut("@annotation(com.ziroom.qa.quality.defende.provider.config.OperateLogAnnotation)")
@@ -60,7 +51,7 @@ public class SysLogAspect {
             //1. 从Header中获取所有的用户信息
             String uid = request.getHeader("uid");
             String userName = request.getHeader("userName");
-            String nickName = URLDecoder.decode(request.getHeader("nickName"),"utf-8");
+            String nickName = URLDecoder.decode(request.getHeader("nickName"), "utf-8");
             String userType = StringUtils.isBlank(request.getHeader("userType")) ? "2" : request.getHeader("userType");
 
             //2. 开始时间
@@ -93,16 +84,6 @@ public class SysLogAspect {
             sysLog.setUserCode(userName);
             sysLog.setOpPerson(nickName);
             sysLog.setOpPersonUserName(userName);
-            String treePath = "";
-            if(String.valueOf(2).equals(userType)){//正式员工
-                RestResultVo<EhrUserDetail> ehrUserDetailRestResultVo = ehrService.getUserDetailFromEhr(uid);
-                EhrUserDetail ehrUserDetail = ehrUserDetailRestResultVo.getData();
-                treePath = ehrUserDetail.getTreePath();
-            }else if (String.valueOf(3).equals(userType)){//外包人员
-                OutsourcingPersonnelVo outsourcingPersonnelVo = matrixService.queryOutsourcingPersonnelFromMatrix(userName);
-                treePath = outsourcingPersonnelVo.getEhrTreePath();
-            }
-            sysLog.setDeptEhrCode(treePath);
 
             //8.获取用户ip地址
             String clientIp = request.getRemoteAddr();

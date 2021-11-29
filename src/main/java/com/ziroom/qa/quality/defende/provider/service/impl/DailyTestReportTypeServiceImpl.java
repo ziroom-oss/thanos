@@ -3,7 +3,6 @@ package com.ziroom.qa.quality.defende.provider.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ziroom.qa.quality.defende.provider.constant.TestCenterConstants;
-import com.ziroom.qa.quality.defende.provider.constant.enums.BugStatusEnum;
 import com.ziroom.qa.quality.defende.provider.constant.enums.TestExecutionStatusEnum;
 import com.ziroom.qa.quality.defende.provider.entity.DailyTestExeReport;
 import com.ziroom.qa.quality.defende.provider.entity.DailyTestReportType;
@@ -14,10 +13,8 @@ import com.ziroom.qa.quality.defende.provider.execTask.service.TestTaskService;
 import com.ziroom.qa.quality.defende.provider.mapper.DailyTestReportTypeMapper;
 import com.ziroom.qa.quality.defende.provider.service.DailyTestExeReportService;
 import com.ziroom.qa.quality.defende.provider.service.DailyTestReportTypeService;
-import com.ziroom.qa.quality.defende.provider.util.JiraUtils;
 import com.ziroom.qa.quality.defende.provider.vo.TestResultVo;
 import lombok.extern.slf4j.Slf4j;
-import net.rcarz.jiraclient.Issue;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -93,17 +90,17 @@ public class DailyTestReportTypeServiceImpl extends ServiceImpl<DailyTestReportT
             for (TestExecution testExecution : exeList) {
                 DailyTestExeReport exeReport = new DailyTestExeReport();
                 if (Objects.nonNull(testExecution.getRelationBug())) {
-                    Issue bugIssue;
-                    try {
-                        bugIssue = JiraUtils.getJiraIssueByIssueKey(testExecution.getRelationBug());
-                        if (Long.parseLong(bugIssue.getStatus().getId()) > BugStatusEnum.REOPENED.getStatusId()) {
-                            bugSuccessCount++;
-                        } else {
-                            bugUnresolvedCount++;
-                        }
-                    } catch (Exception e) {
-                        log.error("查询bug信息失败，bug编号：{}", testExecution.getRelationBug(), e);
-                    }
+//                    Issue bugIssue;
+//                    try {
+//                        bugIssue = JiraUtils.getJiraIssueByIssueKey(testExecution.getRelationBug());
+//                        if (Long.parseLong(bugIssue.getStatus().getId()) > BugStatusEnum.REOPENED.getStatusId()) {
+//                            bugSuccessCount++;
+//                        } else {
+//                            bugUnresolvedCount++;
+//                        }
+//                    } catch (Exception e) {
+//                        log.error("查询bug信息失败，bug编号：{}", testExecution.getRelationBug(), e);
+//                    }
                     exeReport.setBugId(testExecution.getRelationBug());
                     exeReport.setBugStatusId(testExecution.getBugStatusId());
                     exeReport.setBugLevelId(testExecution.getBugLevelId());

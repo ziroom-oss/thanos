@@ -2,21 +2,17 @@ package com.ziroom.qa.quality.defende.provider.execTask.controller;
 
 import com.ziroom.qa.quality.defende.provider.execTask.service.TestTaskOutService;
 import com.ziroom.qa.quality.defende.provider.result.RestResultVo;
-import com.ziroom.qa.quality.defende.provider.util.JiraUtils;
 import com.ziroom.qa.quality.defende.provider.vo.outvo.OutReqVo;
 import com.ziroom.qa.quality.defende.provider.vo.outvo.OutResVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import net.rcarz.jiraclient.Component;
-import net.rcarz.jiraclient.Issue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.util.List;
 import java.util.Objects;
 
 @Api(value = "测试执行(任务)对外api", tags = {"测试执行(任务)对外api"})
@@ -99,14 +95,5 @@ public class TestTaskOutController {
         }
         return RestResultVo.fromData("成功");
     }
-
-    @GetMapping("/mytest")
-    public RestResultVo mytest(@RequestParam String jiraId) {
-//        /outTestTask/mytest
-        Issue issue = JiraUtils.getJiraIssueByIssueKey(jiraId);
-        List<String> list = JiraUtils.getComponentsAllowedValues(issue.getProject().getKey(), issue.getIssueType().getName());
-        return RestResultVo.fromData(list);
-    }
-
 
 }

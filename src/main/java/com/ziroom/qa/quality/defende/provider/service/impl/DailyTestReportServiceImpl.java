@@ -14,7 +14,6 @@ import com.ziroom.qa.quality.defende.provider.mapper.DailyTestReportMapper;
 import com.ziroom.qa.quality.defende.provider.outinterface.client.service.EhrService;
 import com.ziroom.qa.quality.defende.provider.result.CustomException;
 import com.ziroom.qa.quality.defende.provider.service.*;
-import com.ziroom.qa.quality.defende.provider.util.JiraUtils;
 import com.ziroom.qa.quality.defende.provider.util.MyUtil;
 import com.ziroom.qa.quality.defende.provider.util.idgen.IdGenUtil;
 import com.ziroom.qa.quality.defende.provider.vo.EhrUserDetail;
@@ -25,7 +24,6 @@ import com.ziroom.qa.quality.defende.provider.vo.dailyreport.DailyChartVo;
 import com.ziroom.qa.quality.defende.provider.vo.dailyreport.DailyReportVo;
 import com.ziroom.qa.quality.defende.provider.vo.email.SendEmailDTO;
 import lombok.extern.slf4j.Slf4j;
-import net.rcarz.jiraclient.Issue;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -350,7 +348,7 @@ public class DailyTestReportServiceImpl extends ServiceImpl<DailyTestReportMappe
      * @return
      */
     @Override
-    public TestResultVo emailPreview(String userName, Long dailyId) throws Exception {
+    public TestResultVo emailPreview(String userName, Long dailyId) {
         DailyTestReport dailyTestReport = super.getById(dailyId);
         String emailContent = sendMailService.getEmailContent(this.getEmailInfo(userName, dailyTestReport));
         return TestResultVo.builder().flag(true).msgRes(TestCenterConstants.RES_MSG_SUCCESS).data(emailContent).build();
@@ -477,14 +475,8 @@ public class DailyTestReportServiceImpl extends ServiceImpl<DailyTestReportMappe
                 if (CollectionUtils.isNotEmpty(bugList) && reportVo.isJiraFlag()) {
                     bugList.forEach(bug -> {
                         TestReportBugListVo bugListVo = new TestReportBugListVo();
-                        Issue issueBug = null;
-                        try {
-                            issueBug = JiraUtils.getJiraIssueByIssueKey(bug.getBugId());
-                        } catch (Exception e) {
-                            log.error("culReportInfo 获取jira信息失败，jiraid == {}", bug.getBugId(), e);
-                        }
-                        bugListVo.setBugStatusId(Objects.nonNull(issueBug) ? Long.valueOf(issueBug.getStatus().getId()) : bug.getBugStatusId());
-                        bugListVo.setPriorityId(Objects.nonNull(issueBug) ? Long.valueOf(issueBug.getPriority().getId()) : bug.getBugLevelId());
+                        bugListVo.setBugStatusId(bug.getBugStatusId());
+                        bugListVo.setPriorityId(bug.getBugLevelId());
                         bugListVo.setIssueKey(bug.getBugId());
                         bugListVo.setPriority(Objects.isNull(bugListVo.getPriorityId()) ? "-" : BugLevelEnum.getLevelValueByKey(bugListVo.getPriorityId()));
                         bugListVo.setBugStatus(Objects.isNull(bugListVo.getBugStatusId()) ? "-" : BugStatusEnum.getStatusValueByKey(bugListVo.getBugStatusId()));
@@ -514,13 +506,6 @@ public class DailyTestReportServiceImpl extends ServiceImpl<DailyTestReportMappe
                 reportType.setBugRateStr(reportType.getBugRate() + "%");
 
             }
-//            if (thisDailyCount > 0) {
-//                BigDecimal thisDailyRate = BigDecimal.valueOf(thisDailySuccessCount + thisDailyFailCount + thisDailySkipCount)
-//                        .divide(BigDecimal.valueOf(thisDailyCount), 4, RoundingMode.HALF_UP)
-//                        .multiply(BigDecimal.valueOf(100));
-//                reportType.setDailyRate(thisDailyRate.doubleValue());
-//                reportType.setDailyRateStr(reportType.getDailyRate() + "%");
-//            }
             // 手动用例和自动用例标识
             Integer taskType = testTaskService.getById(reportType.getTestTaskId()).getTestExecutionType();
             if (Objects.nonNull(taskType)) {
@@ -570,13 +555,6 @@ public class DailyTestReportServiceImpl extends ServiceImpl<DailyTestReportMappe
         dailyReportSum.setDailyFailCount(dailyFailCount);
         dailyReportSum.setDailySkipCount(dailySkipCount);
 
-//        if (dailyCount > 0) {
-//            BigDecimal drr = BigDecimal.valueOf(dailySuccessCount + dailyFailCount + dailySkipCount)
-//                    .divide(BigDecimal.valueOf(dailyCount), 2, RoundingMode.HALF_UP)
-//                    .multiply(BigDecimal.valueOf(100));
-//            dailyReportSum.setDailyRate(drr.doubleValue());
-//            dailyReportSum.setDailyRateStr(dailyReportSum.getDailyRate() + "%");
-//        }
         //获取bug信息列表
         if (CollectionUtils.isNotEmpty(newBugList)) {
             // 获取未关闭bug列表
@@ -630,7 +608,7 @@ public class DailyTestReportServiceImpl extends ServiceImpl<DailyTestReportMappe
      * @param dailyTestReport
      * @return
      */
-    private SendEmailDTO getEmailInfo(String userName, DailyTestReport dailyTestReport) throws Exception {
+    private SendEmailDTO getEmailInfo(String userName, DailyTestReport dailyTestReport) {
         if (Objects.isNull(dailyTestReport)) {
             throw new CustomException(TestCenterConstants.RES_MSG_PARAMS_EMPTY);
         }

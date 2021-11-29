@@ -1,7 +1,6 @@
 package com.ziroom.qa.quality.defende.provider.caseRepository.service.impl;
 
 import com.alibaba.excel.EasyExcel;
-import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -18,19 +17,20 @@ import com.ziroom.qa.quality.defende.provider.entity.User;
 import com.ziroom.qa.quality.defende.provider.execTask.entity.TaskTestCase;
 import com.ziroom.qa.quality.defende.provider.execTask.service.TaskTestCaseService;
 import com.ziroom.qa.quality.defende.provider.listener.CustomSheetWriteHandler;
-import com.ziroom.qa.quality.defende.provider.outinterface.client.CiFeignClient;
+import com.ziroom.qa.quality.defende.provider.outinterface.client.service.MatrixService;
 import com.ziroom.qa.quality.defende.provider.result.CustomException;
 import com.ziroom.qa.quality.defende.provider.result.RestResultVo;
-import com.ziroom.qa.quality.defende.provider.outinterface.client.service.MatrixService;
 import com.ziroom.qa.quality.defende.provider.service.TestApplicationModuleService;
 import com.ziroom.qa.quality.defende.provider.service.TestApplicationService;
 import com.ziroom.qa.quality.defende.provider.service.UserService;
 import com.ziroom.qa.quality.defende.provider.util.DicUtil;
-import com.ziroom.qa.quality.defende.provider.util.JiraUtils;
 import com.ziroom.qa.quality.defende.provider.util.TimeUtil;
 import com.ziroom.qa.quality.defende.provider.util.XmindUtil;
 import com.ziroom.qa.quality.defende.provider.util.xmind.pojo.Attached;
-import com.ziroom.qa.quality.defende.provider.vo.*;
+import com.ziroom.qa.quality.defende.provider.vo.MatrixUserDetail;
+import com.ziroom.qa.quality.defende.provider.vo.TestCaseVo;
+import com.ziroom.qa.quality.defende.provider.vo.TestResultVo;
+import com.ziroom.qa.quality.defende.provider.vo.TimeVo;
 import com.ziroom.qa.quality.defende.provider.vo.testcase.TestCaseDownVo;
 import com.ziroom.qa.quality.defende.provider.vo.testcase.TestCaseUploadVo;
 import lombok.extern.slf4j.Slf4j;
@@ -56,8 +56,6 @@ public class TestCaseServiceImpl extends ServiceImpl<TestCaseMapper, TestCase> i
     private TestCaseMapper testCaseMapper;
     @Autowired
     private TaskTestCaseService taskTestCaseService;
-    @Autowired
-    private CiFeignClient ciFeignClient;
     @Autowired
     private UserService userService;
     @Autowired
@@ -157,14 +155,15 @@ public class TestCaseServiceImpl extends ServiceImpl<TestCaseMapper, TestCase> i
      */
     @Override
     public RestResultVo validateBelongToSystem(String belongToSystem) {
-        log.info("传入参数 belongToSystem：{}", belongToSystem);
-        RestResultVo<List<OmegaApplicationEnv>> list = ciFeignClient.queryEnvByLevelAndDomain(belongToSystem, "prod");
-        log.info("调动获取Omega 应用接口返回值：{}", JSON.toJSONString(list));
-        if (list.getData().isEmpty()) {
-            return RestResultVo.fromErrorMessage("Omega部署平台不存在正式环境域名：[" + belongToSystem + "]");
-        } else {
-            return RestResultVo.fromSuccess(null);
-        }
+//        log.info("传入参数 belongToSystem：{}", belongToSystem);
+//        RestResultVo<List<OmegaApplicationEnv>> list = ciFeignClient.queryEnvByLevelAndDomain(belongToSystem, "prod");
+//        log.info("调动获取Omega 应用接口返回值：{}", JSON.toJSONString(list));
+//        if (list.getData().isEmpty()) {
+//            return RestResultVo.fromErrorMessage("Omega部署平台不存在正式环境域名：[" + belongToSystem + "]");
+//        } else {
+//            return RestResultVo.fromSuccess(null);
+//        }
+        return RestResultVo.fromSuccess(null);
     }
 
     @Override
@@ -701,7 +700,7 @@ public class TestCaseServiceImpl extends ServiceImpl<TestCaseMapper, TestCase> i
                 throw new CustomException(sb.toString());
             } else {
                 if (CollectionUtils.isNotEmpty(testCaseList)) {
-                    this.batchSaveTestCase(testCaseList,testCaseUploadVo.isUploadFlag());
+                    this.batchSaveTestCase(testCaseList, testCaseUploadVo.isUploadFlag());
                     return "";
                 } else {
                     return "解析结果为空";
@@ -843,12 +842,12 @@ public class TestCaseServiceImpl extends ServiceImpl<TestCaseMapper, TestCase> i
                 //1.3. 验证测试用例必填字段唯一
 //                restResult = this.validateTestCaseRequiredField(testCase,restResult);
                 //1.4. 验证测试用例jiraid是否正确
-                TestResultVo jiraResult = JiraUtils.validateJiraInfo(testCase.getRelationRequirement());
-                if (jiraResult.getFlag()) {
-                    testCase.setRelationRequirement(jiraResult.getData().toString());
-                } else {
-                    restResultVo = RestResultVo.fromErrorMessage(jiraResult.getMsgRes());
-                }
+//                TestResultVo jiraResult = JiraUtils.validateJiraInfo(testCase.getRelationRequirement());
+//                if (jiraResult.getFlag()) {
+//                    testCase.setRelationRequirement(jiraResult.getData().toString());
+//                } else {
+//                    restResultVo = RestResultVo.fromErrorMessage(jiraResult.getMsgRes());
+//                }
                 //2. 格式化测试用例
                 if (restResultVo.isSuccess()) {
                     if (!testCase.isPeopSaveFlag()) {

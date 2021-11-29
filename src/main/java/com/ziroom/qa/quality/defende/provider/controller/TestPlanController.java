@@ -38,7 +38,6 @@ public class TestPlanController {
     @Autowired
     private TestPlanService testPlanService;
 
-    //    @OperateLogAnnotation(moduleName = OperateLogModuleConstants.TESTPLAN, option = OperateLogTypeConstants.PAGING_QUERY)
     @ApiOperation("分页查询用例计划列表")
     @PostMapping(value = "/queryTestPlanByPage", produces = {"application/json;charset=UTF-8"})
     public RestResultVo<Page<TestPlan>> queryTestPlanByPage(@RequestHeader(name = "userName") String userName, @RequestBody Pagination<TestPlan> pagination) {
@@ -53,7 +52,6 @@ public class TestPlanController {
         return restResultVo;
     }
 
-    @OperateLogAnnotation(moduleName = OperateLogModuleConstants.TESTPLAN, option = OperateLogTypeConstants.SAVE)
     @ApiOperation("新增用例计划")
     @PostMapping("/insertTestPlan")
     public RestResultVo<String> insertTestPlan(@RequestHeader(name = "userName") String userName, @RequestBody TestPlan testPlan) {
@@ -96,7 +94,6 @@ public class TestPlanController {
         return restResultVo;
     }
 
-    @OperateLogAnnotation(moduleName = OperateLogModuleConstants.TESTPLAN, option = OperateLogTypeConstants.UPDATE)
     @ApiOperation("修改用例计划")
     @PostMapping("/updateTestPlan")
     public RestResultVo<String> updateTestPlan(@RequestHeader(name = "userName") String userName, @RequestBody TestPlan testPlan) {
@@ -117,7 +114,6 @@ public class TestPlanController {
         return restResultVo;
     }
 
-    @OperateLogAnnotation(moduleName = OperateLogModuleConstants.TESTPLAN, option = OperateLogTypeConstants.DETELE)
     @ApiOperation("删除用例计划")
     @GetMapping("/deleteTestPlan")
     public RestResultVo<String> deleteTestPlan(@RequestHeader(name = "userName") String userName, @RequestParam("idList") List<Long> idList) {
@@ -200,7 +196,6 @@ public class TestPlanController {
         return restResultVo;
     }
 
-    @OperateLogAnnotation(moduleName = OperateLogModuleConstants.TESTPLAN, option = OperateLogTypeConstants.APPROVED)
     @ApiOperation("批量审批测试用例计划")
     @GetMapping(value = "/batchApprovedTestPlan", produces = {"application/json;charset=UTF-8"})
     public RestResultVo<String> batchApprovedTestPlan(@RequestParam List<Long> idList,

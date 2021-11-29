@@ -1,7 +1,6 @@
 package com.ziroom.qa.quality.defende.provider.vo.outvo;
 
 import com.ziroom.qa.quality.defende.provider.execTask.entity.vo.AutoExecutionRecordVo;
-import com.ziroom.qa.quality.defende.provider.vo.telot.ExecutionRecordEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

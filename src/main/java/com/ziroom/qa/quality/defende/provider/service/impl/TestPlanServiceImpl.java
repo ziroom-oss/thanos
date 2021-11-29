@@ -9,10 +9,9 @@ import com.ziroom.qa.quality.defende.provider.constant.enums.TestPlanStatusEnum;
 import com.ziroom.qa.quality.defende.provider.entity.DataDictionary;
 import com.ziroom.qa.quality.defende.provider.entity.TestPlan;
 import com.ziroom.qa.quality.defende.provider.mapper.TestPlanMapper;
-import com.ziroom.qa.quality.defende.provider.service.DataDictionaryService;
 import com.ziroom.qa.quality.defende.provider.outinterface.client.service.MatrixService;
+import com.ziroom.qa.quality.defende.provider.service.DataDictionaryService;
 import com.ziroom.qa.quality.defende.provider.service.TestPlanService;
-import com.ziroom.qa.quality.defende.provider.util.JiraUtils;
 import com.ziroom.qa.quality.defende.provider.util.MD5Util;
 import com.ziroom.qa.quality.defende.provider.util.TimeUtil;
 import com.ziroom.qa.quality.defende.provider.vo.MatrixUserDetail;
@@ -90,11 +89,11 @@ public class TestPlanServiceImpl extends ServiceImpl<TestPlanMapper, TestPlan> i
         boolean flag = false;
         if (resultVo.getFlag()) {
             //1.3 验证测试用例jiraid是否正确
-            TestResultVo jiraRes = JiraUtils.validateJiraInfo(testPlan.getRelationRequirement());
-            if (!jiraRes.getFlag()) {
-                return TestResultVo.builder().flag(false).msgRes(jiraRes.getMsgRes()).build();
-            }
-            testPlan.setRelationRequirement(jiraRes.getData().toString());
+//            TestResultVo jiraRes = JiraUtils.validateJiraInfo(testPlan.getRelationRequirement());
+//            if (!jiraRes.getFlag()) {
+//                return TestResultVo.builder().flag(false).msgRes(jiraRes.getMsgRes()).build();
+//            }
+//            testPlan.setRelationRequirement(jiraRes.getData().toString());
             //2.更新被锁定的执行计划（审核通过会被锁定）
             if (testPlan.getLockFlag()) {
                 //2.1 更新原用例计划为非最新版本
