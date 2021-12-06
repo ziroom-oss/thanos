@@ -1,3 +1,4 @@
+# 请换成正确的地址和账号密码
 spring:
   datasource:
     url: jdbc:p6spy:mysql://1.1.1.1:3306/qu_thanos?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false
@@ -29,6 +30,7 @@ spring:
 
 jiraIssue:
   validateFlag: false
+# 请换成正确的jira地址和账号密码
 jira:
   baseurl: http://jira.xxxx.com/
   username: admin

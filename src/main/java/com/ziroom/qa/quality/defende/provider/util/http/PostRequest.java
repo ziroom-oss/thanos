@@ -82,12 +82,4 @@ public class PostRequest implements HttpRequest {
         return map;
     }
 
-    public static void main(String[] args) {
-        String url = "http://zrpdw.t.ziroom.com/api/base/uploadImg.do";
-        String param = "sign=1BBCDFE9A2C9B3E929D59F1DBC17AA9F&businessType=1&location=在中国普天实业创新园附近&userCode=60005261&uuid=&isNeedWatermark=1&userName=付家智&cityCode=11&orderCode=1111190118111731861lOX&fileName=images/user-1.png";
-        String fileKey = "fileStream";
-        File file = new File("C:\\Users\\admin\\Pictures\\1.jpg");
-        JSONObject jsonObject = (new PostRequest()).invokeRequest(url, param, fileKey, file, new HashMap());
-        System.out.println(jsonObject);
-    }
 }
