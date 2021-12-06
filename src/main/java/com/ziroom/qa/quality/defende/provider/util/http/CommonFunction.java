@@ -52,15 +52,15 @@ public class CommonFunction {
         }
     }
 
-    public static String getAppSign(String uid, String timeStamp) {
-        String key = "7srzT88FcNiRQA3n";
-        if (uid == null || uid.length() < 1) {
-            uid = "0";
-        }
-
-        String sign = toMd5((uid + timeStamp + key).getBytes());
-        return sign;
-    }
+//    public static String getAppSign(String uid, String timeStamp) {
+//        String key = "7srzT88FcNiRQA3n";
+//        if (uid == null || uid.length() < 1) {
+//            uid = "0";
+//        }
+//
+//        String sign = toMd5((uid + timeStamp + key).getBytes());
+//        return sign;
+//    }
 
     public static String getTimeStampOf10() {
         Date date = new Date();
