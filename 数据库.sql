@@ -972,6 +972,6 @@ CREATE TABLE `user`  (
 -- ----------------------------
 -- Records of user
 -- ----------------------------
-INSERT INTO `user` VALUES (1, '100000', 'zhangs1', '张三', '1000', '效能平台研发部', '2021-10-26 18:14:19', '2021-11-03 10:40:12', 'superAdmin', 2, 'e10adc3949ba59abbe56e057f20f883e');
+INSERT INTO `user` VALUES (1, '100000', 'zhangsan', '张三', '1000', '效能平台研发部', '2021-10-26 18:14:19', '2021-11-03 10:40:12', 'superAdmin', 2, 'e10adc3949ba59abbe56e057f20f883e');
 
 SET FOREIGN_KEY_CHECKS = 1;
