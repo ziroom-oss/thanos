@@ -75,7 +75,7 @@
 
 前端 
 1. npm insall   
-2. npm start 具体参照 [传送门](https://github.com/ziroom-oss/thanos-ui/README.md) 中 [搭建步骤] 模块
+2. npm start 具体参照 [传送门](https://github.com/ziroom-oss/thanos-ui) 中 [搭建步骤] 模块
 
 ## 许可证
 
