@@ -9,6 +9,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Objects;
+
 @Api(value = "用户信息管理", tags = {"用户信息管理"})
 @Slf4j
 @RestController
@@ -54,8 +56,12 @@ public class LoginController {
     @ApiOperation("用户修改密码")
     @PostMapping(value = "/userUpdatePwd")
     public RestResultVo userUpdatePwd(@RequestBody UserVo user) {
-        userService.userUpdatePwd(user);
-        return RestResultVo.fromSuccess("注册成功");
+        if (Objects.nonNull(user)) {
+            userService.userUpdatePwd(user);
+            return RestResultVo.fromSuccess("注册成功");
+        } else {
+            return RestResultVo.fromSuccess("信息为空");
+        }
     }
 
 }
