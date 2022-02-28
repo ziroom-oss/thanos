@@ -55,7 +55,7 @@ public class LoginController {
 
     @ApiOperation("用户修改密码")
     @PostMapping(value = "/userUpdatePwd")
-    public RestResultVo userUpdatePwd(@RequestBody UserVo user) {
+    public RestResultVo userUpdatePwd(@RequestBody(required = false) UserVo user) {
         if (Objects.nonNull(user)) {
             userService.userUpdatePwd(user);
             return RestResultVo.fromSuccess("注册成功");
